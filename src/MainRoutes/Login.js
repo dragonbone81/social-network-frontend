@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {inject, observer} from "mobx-react";
-import {Form, Icon} from 'semantic-ui-react'
+import {inject, observer} from 'mobx-react';
+import {Form, Icon} from 'semantic-ui-react';
+import {withRouter} from 'react-router-dom';
 
 class Login extends Component {
     state = {
@@ -17,6 +18,9 @@ class Login extends Component {
             password: this.state.password,
         });
         this.setState({loader: false});
+        if (success){
+            this.props.history.push('/');
+        }
     };
 
     render() {
@@ -38,4 +42,4 @@ class Login extends Component {
     }
 }
 
-export default inject("mainStore")(observer(Login));
+export default withRouter(inject("mainStore")(observer(Login)));

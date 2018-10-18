@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {inject, observer} from "mobx-react";
-import {Form, Icon} from 'semantic-ui-react'
+import {Form, Icon} from 'semantic-ui-react';
+import {withRouter} from 'react-router-dom';
+
 
 class Register extends Component {
     state = {
@@ -23,6 +25,9 @@ class Register extends Component {
             lastname: this.state.lastname
         });
         this.setState({loader: false});
+        if (success) {
+            this.props.history.push('/');
+        }
     };
 
     render() {
@@ -58,4 +63,4 @@ class Register extends Component {
     }
 }
 
-export default inject("mainStore")(observer(Register));
+export default withRouter(inject("mainStore")(observer(Register)));

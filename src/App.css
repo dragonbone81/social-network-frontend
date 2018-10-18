@@ -8,11 +8,13 @@
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
-.register-container{
+
+.register-container {
     padding-top: 50px;
     padding-left: 20px;
     padding-right: 20px;
 }
+
 .login-form {
     max-width: 350px;
     margin: auto;
@@ -23,11 +25,36 @@
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
-.login-container{
+
+.chat-container {
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.chat-div {
+    max-width: 650px;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.90);
+    padding: 20px 40px 20px 40px;
+    border-radius: 4px;
+    color: #505e6c;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.messages-div {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.login-container {
     padding-top: 50px;
     padding-left: 20px;
     padding-right: 20px;
 }
+
 #root {
     /*background: no-repeat center center url(https://s3-us-west-1.amazonaws.com/bobcat-courses-static/images/uc_merced_72_blurred.jpg);*/
     background: linear-gradient(#be6e80, #a2596b);
