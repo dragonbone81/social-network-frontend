@@ -6,19 +6,14 @@ import Message from './Message';
 import ChatListItem from './ChatListItem';
 
 
-class Chat extends Component {
+class ChatContainer extends Component {
     state = {
         chat_name: 'test Chat',
         message: '',
         messages: [],
         chats: [],
-        selectedChat: 0,
+        chat_id: 1,
     };
-
-    get selectedChatID() {
-        return this.state.chats[this.state.selectedChat].chat_id;
-    };
-
     submit = () => {
         console.log('submit');
         this.setState({
@@ -28,14 +23,8 @@ class Chat extends Component {
                 username: this.props.mainStore.user.username
             }]
         });
-        this.props.mainStore.postMessage(this.selectedChatID, this.state.message);
+        this.props.mainStore.postMessage(this.state.chat_id, this.state.message);
         this.state.message = '';
-    };
-
-    loadMessages = () => {
-        this.props.mainStore.getMessages(this.state.chats[this.state.selectedChat].chat_id).then((messages) => {
-            this.setState({messages: messages});
-        });
     };
 
     scrollToBottom = () => {
@@ -44,10 +33,11 @@ class Chat extends Component {
 
     componentDidMount() {
         this.scrollToBottom();
+        this.props.mainStore.getMessages(this.state.chat_id).then((messages) => {
+            this.setState({messages: messages});
+        });
         this.props.mainStore.getUsersChats().then((chats) => {
-            this.setState({chats: chats}, () => {
-                this.loadMessages();
-            });
+            this.setState({chats: chats});
         });
     }
 
@@ -55,27 +45,22 @@ class Chat extends Component {
         this.scrollToBottom();
     }
 
-    chatClicked = (index) => {
-        this.setState({selectedChat: index}, this.loadMessages);
-    };
-
     render() {
         return (
             <div className="chat-container">
                 <div className="chat-div">
                     <div className="chat-sidebar-container">
-                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
+                        <div>{this.state.chat_name}</div>
                         <div className="chat-sidebar">
                             <List selection verticalAlign='middle'>
                                 {this.state.chats.map((chat, index) => {
-                                    return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
-                                                         chat={chat}/>
+                                    return <ChatListItem key={index} chat={chat}/>
                                 })}
                             </List>
                         </div>
                     </div>
                     <div className="chat">
-                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
+                        <div>{this.state.chat_name}</div>
                         <div className="messages-div">
                             <List selection verticalAlign='middle'>
                                 {this.state.messages.map((message, index) => {
@@ -107,4 +92,4 @@ class Chat extends Component {
 }
 
 
-export default withRouter(inject("mainStore")(observer(Chat)));
+export default withRouter(inject("mainStore")(observer(ChatContainer)));

@@ -3,7 +3,8 @@ import {
     register as authRegister,
     login as authLogin,
     getMessages as authGetMessages,
-    postMessage as authPostMessage
+    postMessage as authPostMessage,
+    getUsersChats as authGetUsersChats,
 } from '../api/auth';
 
 // configure({enforceActions: 'always'});
@@ -56,6 +57,13 @@ class Store {
             return false;
         }
         return messages;
+    };
+    getUsersChats = async () => {
+        const chats = await authGetUsersChats(this.user.token);
+        if (!chats) {
+            return false;
+        }
+        return chats;
     };
     user = {
         username: '',

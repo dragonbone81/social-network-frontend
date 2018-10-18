@@ -47,6 +47,21 @@ const getMessages = async (chat_id, token) => {
     }
     return response;
 };
+const getUsersChats = async (token) => {
+    const chatURL = BASE_URL + 'chats/user';
+    let response = await fetch(chatURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
 const postMessage = async (chat_id, token, text) => {
     const chatURL = BASE_URL + 'chats/message/' + chat_id;
     let response = await fetch(chatURL, {
@@ -64,4 +79,4 @@ const postMessage = async (chat_id, token, text) => {
     return response;
 };
 
-export {register, login, getMessages, postMessage}
+export {register, login, getMessages, postMessage, getUsersChats}
