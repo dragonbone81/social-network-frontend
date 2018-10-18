@@ -2,11 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from 'react-router-dom';
-import App from './App'
+import App from './App';
+import MainStore from './stores/mainStore';
+import {Provider} from 'mobx-react';
 
 ReactDOM.render(
     <BrowserRouter>
-        <App/>
+        <Provider mainStore={MainStore}>
+            <App/>
+        </Provider>
     </BrowserRouter>
     , document.getElementById('root')
 );

@@ -10,7 +10,26 @@ const register = async (user) => {
         }
     });
     response = await response.json();
-    console.log(response);
+    if (response.error) {
+        return false;
+    }
+    return response.user;
 };
 
-export {register}
+const login = async (auth) => {
+    const loginURL = BASE_URL + 'auth/token';
+    let response = await fetch(loginURL, {
+        method: 'POST',
+        body: JSON.stringify({...auth}),
+        headers: {
+            "Content-Type": "application/json",
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response.user;
+};
+
+export {register, login}
