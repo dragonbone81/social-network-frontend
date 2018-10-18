@@ -16,7 +16,7 @@ class Chat extends Component {
     };
 
     get selectedChatID() {
-        return this.state.chats[this.state.selectedChat].chat_id;
+        return this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_id : -1;
     };
 
     submit = () => {
@@ -33,7 +33,7 @@ class Chat extends Component {
     };
 
     loadMessages = () => {
-        this.props.mainStore.getMessages(this.state.chats[this.state.selectedChat].chat_id).then((messages) => {
+        this.props.mainStore.getMessages(this.selectedChatID).then((messages) => {
             this.setState({messages: messages});
         });
     };
@@ -43,6 +43,8 @@ class Chat extends Component {
     };
 
     componentDidMount() {
+        if (!this.props.mainStore.user.username)
+            this.props.history.push('/login');
         this.scrollToBottom();
         this.props.mainStore.getUsersChats().then((chats) => {
             this.setState({chats: chats}, () => {

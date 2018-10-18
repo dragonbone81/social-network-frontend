@@ -10,7 +10,6 @@ class App extends Component {
     render() {
         return (
             <React.Fragment>
-                <div>hello world</div>
                 <Switch>
                     <Route exact path='/register' component={Register}/>
                     <Route exact path='/login' component={Login}/>
