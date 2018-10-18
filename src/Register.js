@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Form} from 'semantic-ui-react'
+import {register} from './api/auth';
 
 class Register extends Component {
     state = {
@@ -8,9 +9,21 @@ class Register extends Component {
         email: '',
         firstname: '',
         lastname: '',
+        loader: false,
     };
     submit = async () => {
-        console.log('hello')
+        if (this.state.loader)
+            return;
+        this.setState({loader: true});
+        console.log('hello');
+        await register({
+            username: this.state.username,
+            password: this.state.password,
+            email: this.state.email,
+            firstname: this.state.firstname,
+            lastname: this.state.lastname
+        });
+        this.setState({loader: false});
     };
 
     render() {
@@ -33,7 +46,7 @@ class Register extends Component {
                         <Form.Input required type='password' fluid placeholder='Password...' value={this.state.password}
                                     onChange={({target}) => this.setState({password: target.value})}/>
                     </Form.Group>
-                    <Form.Button>Sign Up</Form.Button>
+                    <Form.Button loading={this.state.loader}>Sign Up</Form.Button>
                 </Form>
             </div>
         )
