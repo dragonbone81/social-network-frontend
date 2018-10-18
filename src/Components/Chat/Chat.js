@@ -10,25 +10,31 @@ class Chat extends Component {
         chat_name: 'test Chat',
         message: '',
         messages: [
-            {
-                text: 'hello',
-                position: 'left',
-            },
-            {
-                text: 'hi',
-                position: 'left',
-            },
-            {
-                text: 'yo',
-                position: 'left',
-            },
+            // {
+            //     text: 'hello',
+            //     position: 'left',
+            // },
+            // {
+            //     text: 'hi',
+            //     position: 'left',
+            // },
+            // {
+            //     text: 'yo',
+            //     position: 'left',
+            // },
         ],
+        chat_id: 1,
     };
     submit = () => {
         console.log('submit');
         this.setState({
-            messages: [...this.state.messages, {text: this.state.message, position: 'right'}]
+            messages: [...this.state.messages, {
+                text: this.state.message,
+                position: 'right',
+                username: this.props.mainStore.user.username
+            }]
         });
+        this.props.mainStore.postMessage(this.state.chat_id, this.state.message);
         this.state.message = '';
     };
 
@@ -38,6 +44,9 @@ class Chat extends Component {
 
     componentDidMount() {
         this.scrollToBottom();
+        this.props.mainStore.getMessages(this.state.chat_id).then((messages) => {
+            this.setState({messages: messages});
+        });
     }
 
     componentDidUpdate() {
@@ -52,6 +61,10 @@ class Chat extends Component {
                     <div className="messages-div">
                         <List selection verticalAlign='middle'>
                             {this.state.messages.map((message, index) => {
+                                if (message.username === this.props.mainStore.user.username)
+                                    message.position = 'right';
+                                else
+                                    message.position = 'left';
                                 return <Message key={index} message={message}/>
                             })}
                         </List>

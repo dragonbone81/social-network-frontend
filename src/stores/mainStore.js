@@ -1,5 +1,12 @@
-import {observable, decorate, runInAction} from "mobx";
-import {register as authRegister, login as authLogin} from '../api/auth';
+import {observable, action, decorate, runInAction, configure} from "mobx";
+import {
+    register as authRegister,
+    login as authLogin,
+    getMessages as authGetMessages,
+    postMessage as authPostMessage
+} from '../api/auth';
+
+// configure({enforceActions: 'always'});
 
 class Store {
     constructor() {
@@ -36,6 +43,20 @@ class Store {
         });
         return true;
     };
+    postMessage = async (chat_id, text) => {
+        const message = await authPostMessage(chat_id, this.user.token, text);
+        if (!message) {
+            return false;
+        }
+        return message;
+    };
+    getMessages = async (chat_id) => {
+        const messages = await authGetMessages(chat_id, this.user.token);
+        if (!messages) {
+            return false;
+        }
+        return messages;
+    };
     user = {
         username: '',
         firstname: '',
@@ -47,6 +68,9 @@ class Store {
 
 decorate(Store, {
     user: observable,
+    register: action,
+    login: action,
+    hydrateStoreWithLocalStorage: action,
 });
 
 export default new Store();

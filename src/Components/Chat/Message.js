@@ -3,10 +3,14 @@ import {List, Image} from 'semantic-ui-react';
 
 const Message = (props) => {
     return (
-        <List.Item style={{textAlign: props.message.position}}>
-            <Image avatar src='/images/avatar/small/helen.jpg'/>
+        <List.Item style={{
+            textAlign: props.message.position,
+            backgroundColor: props.message.position === 'right' ? '#d0ffcb' : '#e2e2e2'
+        }}>
             <List.Content>
-                {props.message.text}
+                <List.Description>
+                    <b>{props.message.username}: </b>{props.message.text}
+                </List.Description>
             </List.Content>
         </List.Item>
     );

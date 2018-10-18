@@ -32,4 +32,36 @@ const login = async (auth) => {
     return response.user;
 };
 
-export {register, login}
+const getMessages = async (chat_id, token) => {
+    const chatURL = BASE_URL + 'chats/messages/' + chat_id;
+    let response = await fetch(chatURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+const postMessage = async (chat_id, token, text) => {
+    const chatURL = BASE_URL + 'chats/message/' + chat_id;
+    let response = await fetch(chatURL, {
+        method: 'POST',
+        body: JSON.stringify({text: text}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+
+export {register, login, getMessages, postMessage}
