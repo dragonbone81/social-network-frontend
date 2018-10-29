@@ -61,6 +61,7 @@
 .messages-div {
     width: 100%;
     max-height: 400px;
+    min-height: 400px;
     overflow-y: scroll;
     will-change: transform;
 }

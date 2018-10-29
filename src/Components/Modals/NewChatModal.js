@@ -11,6 +11,7 @@ class NewChatModal extends Component {
         value: '',
         error: null,
         loader: false,
+        chat_name: '',
     };
     handleSearchChange = (e, {searchQuery}) => {
         if (searchQuery.length >= 3) {
@@ -46,9 +47,13 @@ class NewChatModal extends Component {
         if (this.state.loader)
             return;
         this.setState({loader: true});
-
-        this.setState({loader: false});
-        this.close();
+        const response = await this.props.mainStore.createChat(this.state.users, this.state.chat_name);
+        if (response) {
+            this.setState({loader: false});
+            this.close();
+        } else {
+            this.setState({error: true});
+        }
     };
     close = () => {
         this.setState({
@@ -59,6 +64,7 @@ class NewChatModal extends Component {
             value: '',
             error: null,
             loader: false,
+            chat_name: '',
         });
         this.props.onClose();
     };
@@ -69,6 +75,8 @@ class NewChatModal extends Component {
                 <Modal.Header>Create Chat</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.submit}>
+                        <Form.Input required type='text' fluid placeholder='Chat name...' value={this.state.chat_name}
+                                    onChange={({target}) => this.setState({chat_name: target.value})}/>
                         <Form.Dropdown
                             fluid
                             selection

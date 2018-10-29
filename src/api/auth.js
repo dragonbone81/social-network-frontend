@@ -93,5 +93,21 @@ const getUsersDropdown = async (queryItem, token) => {
     }
     return response;
 };
+const createChat = async (chat_users, chat_name, token) => {
+    const usersURL = BASE_URL + `chats/new`;
+    let response = await fetch(usersURL, {
+        method: 'POST',
+        body: JSON.stringify({chat_name, chat_users}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
 
-export {register, login, getMessages, postMessage, getUsersChats, getUsersDropdown}
+export {register, login, getMessages, postMessage, getUsersChats, getUsersDropdown, createChat}

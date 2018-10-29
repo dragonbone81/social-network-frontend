@@ -6,6 +6,7 @@ import {
     postMessage as authPostMessage,
     getUsersChats as authGetUsersChats,
     getUsersDropdown as authGetUsersDropdown,
+    createChat as authCreateChat,
 } from '../api/auth';
 
 // configure({enforceActions: 'always'});
@@ -75,7 +76,14 @@ class Store {
         if (!users) {
             return false;
         }
-        return users;
+        return users.filter((user) => user.username !== this.user.username);
+    };
+    createChat = async (users, chat_name) => {
+        const chat = await authCreateChat(users, chat_name, this.user.token);
+        if (!chat) {
+            return false;
+        }
+        return chat;
     };
     user = {
         username: '',
