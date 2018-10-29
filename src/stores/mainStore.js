@@ -5,6 +5,7 @@ import {
     getMessages as authGetMessages,
     postMessage as authPostMessage,
     getUsersChats as authGetUsersChats,
+    getUsersDropdown as authGetUsersDropdown,
 } from '../api/auth';
 
 // configure({enforceActions: 'always'});
@@ -52,22 +53,29 @@ class Store {
         return message;
     };
     getMessages = async (chat_id) => {
-        runInAction(()=>this.gettingChatMessages = true);
+        runInAction(() => this.gettingChatMessages = true);
         const messages = await authGetMessages(chat_id, this.user.token);
-        runInAction(()=>this.gettingChatMessages = false);
+        runInAction(() => this.gettingChatMessages = false);
         if (!messages) {
             return false;
         }
         return messages;
     };
     getUsersChats = async () => {
-        runInAction(()=>this.gettingUsersChats = true);
+        runInAction(() => this.gettingUsersChats = true);
         const chats = await authGetUsersChats(this.user.token);
-        runInAction(()=>this.gettingUsersChats = false);
+        runInAction(() => this.gettingUsersChats = false);
         if (!chats) {
             return false;
         }
         return chats;
+    };
+    getUsersDropdown = async (queryItem) => {
+        const users = await authGetUsersDropdown(queryItem, this.user.token);
+        if (!users) {
+            return false;
+        }
+        return users;
     };
     user = {
         username: '',

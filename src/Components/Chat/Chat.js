@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {inject, observer} from "mobx-react";
-import {Form, Icon, List, Image} from 'semantic-ui-react';
+import {Form, Button, Icon, List, Image} from 'semantic-ui-react';
 import {withRouter} from 'react-router-dom';
 import Message from './Message';
 import ChatListItem from './ChatListItem';
+import NewChatModal from '../Modals/NewChatModal';
 
 
 class Chat extends Component {
@@ -13,6 +14,7 @@ class Chat extends Component {
         messages: [],
         chats: [],
         selectedChat: 0,
+        newChatModalOpen: false,
     };
 
     get selectedChatID() {
@@ -20,7 +22,6 @@ class Chat extends Component {
     };
 
     submit = () => {
-        console.log('submit');
         this.setState({
             messages: [...this.state.messages, {
                 text: this.state.message,
@@ -49,7 +50,8 @@ class Chat extends Component {
         this.scrollToBottom();
         this.props.mainStore.getUsersChats().then((chats) => {
             this.setState({chats: chats}, () => {
-                this.loadMessages();
+                if (chats.length !== 0)
+                    this.loadMessages();
             });
         });
     }
@@ -62,60 +64,73 @@ class Chat extends Component {
         this.setState({selectedChat: index}, this.loadMessages);
     };
 
+    closeNewChatModal = () => {
+        this.setState({newChatModalOpen: false})
+    };
+    openNewChatModal = () => {
+        this.setState({newChatModalOpen: true})
+    };
+
     render() {
         return (
-            <div className="chat-container">
-                <div className="chat-div">
-                    <div className="chat-sidebar-container">
-                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
-                        <div className="chat-sidebar">
-                            {this.props.mainStore.gettingUsersChats ?
+            <>
+                <NewChatModal open={this.state.newChatModalOpen} onClose={this.closeNewChatModal}/>
+                <div className="chat-container">
+                    <div className="chat-div">
+                        <div className="chat-sidebar-container">
+                            <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
+                            <div className="chat-sidebar">
+                                {this.props.mainStore.gettingUsersChats ?
+                                    <div>Loading...</div>
+                                    :
+                                    <div style={{textAlign: 'center'}}>
+                                        <List selection verticalAlign='middle' style={{textAlign: 'left'}}>
+                                            {this.state.chats.map((chat, index) => {
+                                                return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
+                                                                     chat={chat}/>
+                                            })}
+                                        </List>
+                                        <Button icon='plus' onClick={this.openNewChatModal}/>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div className="chat">
+                            <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
+                            {this.props.mainStore.gettingChatMessages ?
                                 <div>Loading...</div>
                                 :
-                                <List selection verticalAlign='middle'>
-                                    {this.state.chats.map((chat, index) => {
-                                        return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
-                                                             chat={chat}/>
-                                    })}
-                                </List>
+                                <>
+                                    <div className="messages-div">
+
+                                        <List selection verticalAlign='middle'>
+                                            {this.state.messages.map((message, index) => {
+                                                if (message.username === this.props.mainStore.user.username)
+                                                    message.position = 'right';
+                                                else
+                                                    message.position = 'left';
+                                                return <Message key={index} message={message}/>
+                                            })}
+                                        </List>
+                                        < div style={{float: "left", clear: "both"}}
+                                              ref={(el) => {
+                                                  this.messagesEnd = el;
+                                              }}>
+                                        </div>
+                                    </div>
+                                    <div className="messages-form">
+                                        <Form onSubmit={this.submit}>
+                                            <Form.Input required type='text' fluid placeholder='Type your message...'
+                                                        value={this.state.message}
+                                                        onChange={({target}) => this.setState({message: target.value})}/>
+                                        </Form>
+                                    </div>
+                                </>
                             }
                         </div>
                     </div>
-                    <div className="chat">
-                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
-                        {this.props.mainStore.gettingChatMessages ?
-                            <div>Loading...</div>
-                            :
-                            <>
-                                <div className="messages-div">
-
-                                    <List selection verticalAlign='middle'>
-                                        {this.state.messages.map((message, index) => {
-                                            if (message.username === this.props.mainStore.user.username)
-                                                message.position = 'right';
-                                            else
-                                                message.position = 'left';
-                                            return <Message key={index} message={message}/>
-                                        })}
-                                    </List>
-                                    < div style={{float: "left", clear: "both"}}
-                                          ref={(el) => {
-                                              this.messagesEnd = el;
-                                          }}>
-                                    </div>
-                                </div>
-                                <div className="messages-form">
-                                    <Form onSubmit={this.submit}>
-                                        <Form.Input required type='text' fluid placeholder='Type your message...'
-                                                    value={this.state.message}
-                                                    onChange={({target}) => this.setState({message: target.value})}/>
-                                    </Form>
-                                </div>
-                            </>
-                        }
-                    </div>
                 </div>
-            </div>
+            </>
         )
     }
 }
