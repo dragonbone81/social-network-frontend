@@ -39,7 +39,8 @@ class Chat extends Component {
     };
 
     scrollToBottom = () => {
-        this.messagesEnd.scrollIntoView();
+        if (this.messagesEnd)
+            this.messagesEnd.scrollIntoView();
     };
 
     componentDidMount() {
@@ -68,39 +69,50 @@ class Chat extends Component {
                     <div className="chat-sidebar-container">
                         <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
                         <div className="chat-sidebar">
-                            <List selection verticalAlign='middle'>
-                                {this.state.chats.map((chat, index) => {
-                                    return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
-                                                         chat={chat}/>
-                                })}
-                            </List>
+                            {this.props.mainStore.gettingUsersChats ?
+                                <div>Loading...</div>
+                                :
+                                <List selection verticalAlign='middle'>
+                                    {this.state.chats.map((chat, index) => {
+                                        return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
+                                                             chat={chat}/>
+                                    })}
+                                </List>
+                            }
                         </div>
                     </div>
                     <div className="chat">
                         <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
-                        <div className="messages-div">
-                            <List selection verticalAlign='middle'>
-                                {this.state.messages.map((message, index) => {
-                                    if (message.username === this.props.mainStore.user.username)
-                                        message.position = 'right';
-                                    else
-                                        message.position = 'left';
-                                    return <Message key={index} message={message}/>
-                                })}
-                            </List>
-                            <div style={{float: "left", clear: "both"}}
-                                 ref={(el) => {
-                                     this.messagesEnd = el;
-                                 }}>
-                            </div>
-                        </div>
-                        <div className="messages-form">
-                            <Form onSubmit={this.submit}>
-                                <Form.Input required type='text' fluid placeholder='Type your message...'
-                                            value={this.state.message}
-                                            onChange={({target}) => this.setState({message: target.value})}/>
-                            </Form>
-                        </div>
+                        {this.props.mainStore.gettingChatMessages ?
+                            <div>Loading...</div>
+                            :
+                            <>
+                                <div className="messages-div">
+
+                                    <List selection verticalAlign='middle'>
+                                        {this.state.messages.map((message, index) => {
+                                            if (message.username === this.props.mainStore.user.username)
+                                                message.position = 'right';
+                                            else
+                                                message.position = 'left';
+                                            return <Message key={index} message={message}/>
+                                        })}
+                                    </List>
+                                    < div style={{float: "left", clear: "both"}}
+                                          ref={(el) => {
+                                              this.messagesEnd = el;
+                                          }}>
+                                    </div>
+                                </div>
+                                <div className="messages-form">
+                                    <Form onSubmit={this.submit}>
+                                        <Form.Input required type='text' fluid placeholder='Type your message...'
+                                                    value={this.state.message}
+                                                    onChange={({target}) => this.setState({message: target.value})}/>
+                                    </Form>
+                                </div>
+                            </>
+                        }
                     </div>
                 </div>
             </div>

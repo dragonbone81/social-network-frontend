@@ -52,14 +52,18 @@ class Store {
         return message;
     };
     getMessages = async (chat_id) => {
+        runInAction(()=>this.gettingChatMessages = true);
         const messages = await authGetMessages(chat_id, this.user.token);
+        runInAction(()=>this.gettingChatMessages = false);
         if (!messages) {
             return false;
         }
         return messages;
     };
     getUsersChats = async () => {
+        runInAction(()=>this.gettingUsersChats = true);
         const chats = await authGetUsersChats(this.user.token);
+        runInAction(()=>this.gettingUsersChats = false);
         if (!chats) {
             return false;
         }
@@ -72,10 +76,14 @@ class Store {
         email: '',
         token: '',
     };
+    gettingUsersChats = false;
+    gettingChatMessages = false;
 }
 
 decorate(Store, {
     user: observable,
+    gettingUsersChats: observable,
+    gettingChatMessages: observable,
     register: action,
     login: action,
     hydrateStoreWithLocalStorage: action,
