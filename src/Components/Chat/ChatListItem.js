@@ -1,12 +1,22 @@
 import React from 'react';
-import {List, Image} from 'semantic-ui-react';
+import {List, Button, Icon} from 'semantic-ui-react';
 
 const ChatListItem = (props) => {
     return (
-        <List.Item onClick={props.onClick}>
+        <List.Item>
             <List.Content>
                 <List.Description>
-                    <b>{props.chat.chat_name}</b>
+                    {/*<div className="course-item">*/}
+                        {/*<div className="course-list-options" onClick={props.onClick}>*/}
+                            <b>{props.chat.chat_name}</b>
+                        {/*</div>*/}
+                        {/*<div>*/}
+                            {/*<Button icon*/}
+                                    {/*color="pink" size="mini">*/}
+                                {/*<Icon name="close" onClick={() => console.log('asd')}/>*/}
+                            {/*</Button>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
                 </List.Description>
             </List.Content>
         </List.Item>

@@ -62,7 +62,8 @@ class Chat extends Component {
     }
 
     chatClicked = (index) => {
-        this.setState({selectedChat: index}, this.loadMessages);
+        if(index !== this.state.selectedChat)
+            this.setState({selectedChat: index}, this.loadMessages);
     };
 
     closeNewChatModal = () => {
@@ -74,55 +75,53 @@ class Chat extends Component {
 
     render() {
         return (
-            <>
+            <div className="chat-container">
                 <NewChatModal open={this.state.newChatModalOpen} onClose={this.closeNewChatModal}/>
-                <div className="chat-container">
-                    <div className="chat-div">
-                        <div className="chat-sidebar-container">
-                            <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
-                            <div className="chat-sidebar">
-                                {this.props.mainStore.gettingUsersChats ?
-                                    <div>Loading...</div>
-                                    :
-                                    <div style={{textAlign: 'center'}}>
-                                        <List selection verticalAlign='middle' style={{textAlign: 'left'}}>
-                                            {this.state.chats.map((chat, index) => {
-                                                return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
-                                                                     chat={chat}/>
-                                            })}
-                                        </List>
-                                        <Button icon='plus' onClick={this.openNewChatModal}/>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div className="chat">
-                            <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
-                            {this.props.mainStore.gettingChatMessages ?
+                <div className="chat-div">
+                    <div className="chat-sidebar-container">
+                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
+                        <div className="chat-sidebar">
+                            {this.props.mainStore.gettingUsersChats ?
                                 <div>Loading...</div>
                                 :
-                                <div className="chat-inside">
-                                    <div className="messages-div">
-                                        <MessageList messages={this.state.messages}/>
-                                        < div style={{float: "left", clear: "both"}}
-                                              ref={(el) => {
-                                                  this.messagesEnd = el;
-                                              }}>
-                                        </div>
-                                    </div>
-                                    <div className="messages-form">
-                                        <Form onSubmit={this.submit}>
-                                            <Form.Input required type='text' fluid placeholder='Type your message...'
-                                                        value={this.state.message}
-                                                        onChange={({target}) => this.setState({message: target.value})}/>
-                                        </Form>
-                                    </div>
+                                <div style={{textAlign: 'center'}}>
+                                    <List selection verticalAlign='middle' style={{textAlign: 'left'}}>
+                                        {this.state.chats.map((chat, index) => {
+                                            return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
+                                                                 chat={chat}/>
+                                        })}
+                                    </List>
+                                    <Button icon='plus' onClick={this.openNewChatModal}/>
                                 </div>
                             }
                         </div>
                     </div>
+                    <div className="chat">
+                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
+                        {this.props.mainStore.gettingChatMessages ?
+                            <div>Loading...</div>
+                            :
+                            <div className="chat-inside">
+                                <div className="messages-div">
+                                    <MessageList messages={this.state.messages}/>
+                                    < div style={{float: "left", clear: "both"}}
+                                          ref={(el) => {
+                                              this.messagesEnd = el;
+                                          }}>
+                                    </div>
+                                </div>
+                                <div className="messages-form">
+                                    <Form onSubmit={this.submit}>
+                                        <Form.Input required type='text' fluid placeholder='Type your message...'
+                                                    value={this.state.message}
+                                                    onChange={({target}) => this.setState({message: target.value})}/>
+                                    </Form>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </>
+            </div>
         )
     }
 }

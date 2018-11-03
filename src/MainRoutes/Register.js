@@ -26,9 +26,14 @@ class Register extends Component {
         });
         this.setState({loader: false});
         if (success) {
-            this.props.history.push('/');
+            this.props.history.push('/chat');
         }
     };
+
+    componentDidMount() {
+        if (!!this.props.mainStore.user.token)
+            this.props.history.push('/chat');
+    }
 
     render() {
         return (
