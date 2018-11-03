@@ -5,6 +5,7 @@ import {withRouter} from 'react-router-dom';
 import Message from './Message';
 import ChatListItem from './ChatListItem';
 import NewChatModal from '../Modals/NewChatModal';
+import MessageList from './MessageList';
 
 
 class Chat extends Component {
@@ -100,18 +101,9 @@ class Chat extends Component {
                             {this.props.mainStore.gettingChatMessages ?
                                 <div>Loading...</div>
                                 :
-                                <>
+                                <div className="chat-inside">
                                     <div className="messages-div">
-
-                                        <List selection verticalAlign='middle'>
-                                            {this.state.messages.map((message, index) => {
-                                                if (message.username === this.props.mainStore.user.username)
-                                                    message.position = 'right';
-                                                else
-                                                    message.position = 'left';
-                                                return <Message key={index} message={message}/>
-                                            })}
-                                        </List>
+                                        <MessageList messages={this.state.messages}/>
                                         < div style={{float: "left", clear: "both"}}
                                               ref={(el) => {
                                                   this.messagesEnd = el;
@@ -125,7 +117,7 @@ class Chat extends Component {
                                                         onChange={({target}) => this.setState({message: target.value})}/>
                                         </Form>
                                     </div>
-                                </>
+                                </div>
                             }
                         </div>
                     </div>
