@@ -6,7 +6,7 @@ import Message from './Message';
 class MessageList extends Component {
     render() {
         return (
-            <div>
+            <>
                 {this.props.messages.map((message, index, arr) => {
                     if (message.username === this.props.mainStore.user.username)
                         message.position = 'right';
@@ -15,7 +15,7 @@ class MessageList extends Component {
                     return <Message firstMessage={index !== 0 && message.username !== arr[index - 1].username}
                                     key={index} message={message}/>
                 })}
-            </div>
+            </>
         )
     }
 }
