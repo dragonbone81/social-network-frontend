@@ -3,7 +3,7 @@ import {List, Button, Icon} from 'semantic-ui-react';
 
 const ChatListItem = (props) => {
     return (
-        <List.Item>
+        <List.Item onClick={props.onClick}>
             <List.Content>
                 <List.Description>
                     {/*<div className="course-item">*/}

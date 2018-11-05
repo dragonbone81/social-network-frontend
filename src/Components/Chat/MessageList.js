@@ -6,15 +6,16 @@ import Message from './Message';
 class MessageList extends Component {
     render() {
         return (
-            <List selection verticalAlign='middle'>
-                {this.props.messages.map((message, index) => {
+            <div>
+                {this.props.messages.map((message, index, arr) => {
                     if (message.username === this.props.mainStore.user.username)
                         message.position = 'right';
                     else
                         message.position = 'left';
-                    return <Message key={index} message={message}/>
+                    return <Message firstMessage={index !== 0 && message.username !== arr[index - 1].username}
+                                    key={index} message={message}/>
                 })}
-            </List>
+            </div>
         )
     }
 }

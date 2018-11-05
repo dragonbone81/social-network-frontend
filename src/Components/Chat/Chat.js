@@ -51,8 +51,14 @@ class Chat extends Component {
         this.scrollToBottom();
         this.props.mainStore.getUsersChats().then((chats) => {
             this.setState({chats: chats}, () => {
-                if (chats.length !== 0)
-                    this.loadMessages();
+                if (chats.length !== 0) {
+                    const oldChatNumber = JSON.parse(localStorage.getItem("chat"));
+                    if (oldChatNumber && oldChatNumber <= chats.length - 1) {
+                        this.setState({selectedChat: oldChatNumber}, this.loadMessages);
+                    } else {
+                        this.loadMessages();
+                    }
+                }
             });
         });
     }
@@ -62,8 +68,10 @@ class Chat extends Component {
     }
 
     chatClicked = (index) => {
-        if(index !== this.state.selectedChat)
+        if (index !== this.state.selectedChat) {
             this.setState({selectedChat: index}, this.loadMessages);
+            localStorage.setItem("chat", JSON.stringify(index))
+        }
     };
 
     closeNewChatModal = () => {
