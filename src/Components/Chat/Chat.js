@@ -87,7 +87,6 @@ class Chat extends Component {
                 <NewChatModal open={this.state.newChatModalOpen} onClose={this.closeNewChatModal}/>
                 <div className="chat-div">
                     <div className="chat-sidebar-container">
-                        <div>{this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_name : 'Loading...'}</div>
                         <div className="chat-sidebar">
                             {this.props.mainStore.gettingUsersChats ?
                                 <div>Loading...</div>
@@ -95,7 +94,7 @@ class Chat extends Component {
                                 <div style={{textAlign: 'center'}}>
                                     <List selection verticalAlign='middle' style={{textAlign: 'left'}}>
                                         {this.state.chats.map((chat, index) => {
-                                            return <ChatListItem onClick={() => this.chatClicked(index)} key={index}
+                                            return <ChatListItem index={index} active={this.state.selectedChat} onClick={() => this.chatClicked(index)} key={index}
                                                                  chat={chat}/>
                                         })}
                                     </List>
