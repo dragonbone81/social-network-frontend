@@ -47,7 +47,7 @@ class NewChatModal extends Component {
         if (this.state.loader)
             return;
         this.setState({loader: true});
-        const response = await this.props.mainStore.createChat(this.state.users, this.state.chat_name);
+        const response = await this.props.createNewChat(this.state.users, this.state.chat_name);
         if (response) {
             this.setState({loader: false});
             this.props.refreshUserChats();

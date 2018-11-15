@@ -5,6 +5,7 @@ import {withRouter} from 'react-router-dom';
 import ChatListItem from './ChatListItem';
 import NewChatModal from '../Modals/NewChatModal';
 import MessageList from './MessageList';
+import io from 'socket.io-client';
 
 class Chat extends Component {
     state = {
@@ -14,6 +15,8 @@ class Chat extends Component {
         chats: [],
         selectedChat: 0,
         newChatModalOpen: false,
+        socket: io('http://localhost:3001/'),
+
     };
 
     get selectedChatID() {
@@ -29,7 +32,7 @@ class Chat extends Component {
             }]
         });
         // this.props.mainStore.postMessage(this.selectedChatID, this.state.message);
-        this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message);
+        this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message, this.state.socket);
         this.setState({message: ''});
     };
 
@@ -57,14 +60,34 @@ class Chat extends Component {
                     } else {
                         this.loadMessages();
                     }
+                    this.joinAllChats();
                 }
             });
         });
+        this.state.socket.on('message', (data) => {
+            if (data.chat_id === this.state.chats[this.state.selectedChat].chat_id) {
+                data.message.position = 'left';
+                this.setState({
+                    messages: [...this.state.messages, data.message]
+                });
+            }
+            console.log(data, this.state.chats[this.state.selectedChat].chat_id);
+        })
     }
 
+    joinAChat = (chat_id) => {
+        this.props.mainStore.joinChatWS(chat_id, this.state.socket);
+    };
+    joinAllChats = () => {
+        this.state.chats.forEach((chat) => {
+            this.props.mainStore.joinChatWS(chat.chat_id, this.state.socket);
+        })
+    };
     refreshUserChats = () => {
         this.props.mainStore.getUsersChats().then((chats) => {
-            this.setState({chats: chats});
+            this.setState({chats: chats}, () => {
+                this.joinAllChats();
+            });
         });
     };
 
@@ -86,11 +109,15 @@ class Chat extends Component {
     openNewChatModal = () => {
         this.setState({newChatModalOpen: true})
     };
+    createNewChat = (users, chat_name) => {
+        return this.props.mainStore.createChat(users, chat_name);
+    };
 
     render() {
         return (
             <div className="chat-container">
-                <NewChatModal refreshUserChats={this.refreshUserChats} open={this.state.newChatModalOpen}
+                <NewChatModal createNewChat={this.createNewChat} refreshUserChats={this.refreshUserChats}
+                              open={this.state.newChatModalOpen}
                               onClose={this.closeNewChatModal}/>
                 <div className="chat-div">
                     <div className="chat-sidebar-container">
