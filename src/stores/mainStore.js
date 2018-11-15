@@ -1,4 +1,4 @@
-import {observable, action, decorate, runInAction, configure} from "mobx";
+import {observable, action, decorate, runInAction} from "mobx";
 import {
     register as authRegister,
     login as authLogin,

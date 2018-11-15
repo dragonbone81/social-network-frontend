@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Button, Icon, List, Modal} from 'semantic-ui-react';
+import {Form, List, Modal} from 'semantic-ui-react';
 import {inject, observer} from "mobx-react";
 
 class NewChatModal extends Component {
@@ -50,6 +50,7 @@ class NewChatModal extends Component {
         const response = await this.props.mainStore.createChat(this.state.users, this.state.chat_name);
         if (response) {
             this.setState({loader: false});
+            this.props.refreshUserChats();
             this.close();
         } else {
             this.setState({error: true});

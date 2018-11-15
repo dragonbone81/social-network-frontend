@@ -1,4 +1,4 @@
-import {Switch, Route, withRouter, Redirect} from 'react-router-dom';
+import {Switch, Route, withRouter} from 'react-router-dom';
 import React, {Component} from 'react';
 import Register from './MainRoutes/Register';
 import Login from './MainRoutes/Login';

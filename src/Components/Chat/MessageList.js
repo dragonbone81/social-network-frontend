@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {List} from 'semantic-ui-react';
 import {inject, observer} from "mobx-react";
 import Message from './Message';
 
