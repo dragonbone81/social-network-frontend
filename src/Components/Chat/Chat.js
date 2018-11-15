@@ -16,7 +16,7 @@ class Chat extends Component {
         selectedChat: 0,
         newChatModalOpen: false,
         socket: io('http://localhost:3001/'),
-
+        unreadMessages: {},
     };
 
     get selectedChatID() {
@@ -48,6 +48,7 @@ class Chat extends Component {
     };
 
     componentDidMount() {
+        this.setState({unreadMessages: JSON.parse(localStorage.getItem("unreadMessages")) || {}});
         if (!this.props.mainStore.user.username)
             this.props.history.push('/login');
         this.scrollToBottom();
@@ -70,6 +71,12 @@ class Chat extends Component {
                 this.setState({
                     messages: [...this.state.messages, data.message]
                 });
+            } else {
+                const oldMessageCount = this.state.unreadMessages[data.chat_id] || 0;
+                const countObj = {};
+                countObj[data.chat_id] = oldMessageCount + 1;
+                this.setState({unreadMessages: {...this.state.unreadMessages, ...countObj}});
+                localStorage.setItem("unreadMessages", JSON.stringify(this.state.unreadMessages))
             }
             console.log(data, this.state.chats[this.state.selectedChat].chat_id);
         })
@@ -98,9 +105,15 @@ class Chat extends Component {
     chatClicked = (index) => {
         if (index !== this.state.selectedChat) {
             this.setState({selectedChat: index}, this.loadMessages);
-            localStorage.setItem("chat", JSON.stringify(index))
+            localStorage.setItem("chat", JSON.stringify(index));
+            this.setState({message: ''});
+
+            const copyObj = {...this.state.unreadMessages};
+            delete copyObj[this.state.chats[index].chat_id];
+            this.setState({unreadMessages: {...copyObj}}, () => {
+                localStorage.setItem("unreadMessages", JSON.stringify(this.state.unreadMessages))
+            });
         }
-        this.setState({message: ''});
     };
 
     closeNewChatModal = () => {
@@ -130,9 +143,11 @@ class Chat extends Component {
 
                                     <List selection verticalAlign='middle' style={{textAlign: 'left'}}>
                                         {this.state.chats.map((chat, index) => {
-                                            return <ChatListItem index={index} active={this.state.selectedChat}
-                                                                 onClick={() => this.chatClicked(index)} key={index}
-                                                                 chat={chat}/>
+                                            return <ChatListItem
+                                                unreadMessages={this.state.unreadMessages[chat.chat_id]}
+                                                index={index} active={this.state.selectedChat}
+                                                onClick={() => this.chatClicked(index)} key={index}
+                                                chat={chat}/>
                                         })}
                                     </List>
                             }

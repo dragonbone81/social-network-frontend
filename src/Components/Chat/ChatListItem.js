@@ -1,5 +1,5 @@
 import React from 'react';
-import {List} from 'semantic-ui-react';
+import {List, Label} from 'semantic-ui-react';
 
 const ChatListItem = (props) => {
     return (
@@ -8,7 +8,9 @@ const ChatListItem = (props) => {
                 <List.Description>
                     {/*<div className="course-item">*/}
                     {/*<div className="course-list-options" onClick={props.onClick}>*/}
-                    <b>{props.chat.chat_name}</b>
+                    <b>{props.chat.chat_name}</b> {props.unreadMessages ?
+                    <Label style={{float: 'right'}} horizontal circular
+                           color='red'>{props.unreadMessages}</Label> : null}
                     {/*</div>*/}
                     {/*<div>*/}
                     {/*<Button icon*/}
