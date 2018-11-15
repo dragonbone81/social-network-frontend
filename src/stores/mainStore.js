@@ -4,6 +4,7 @@ import {
     login as authLogin,
     getMessages as authGetMessages,
     postMessage as authPostMessage,
+    postMessageWS as authPostMessageWS,
     getUsersChats as authGetUsersChats,
     getUsersDropdown as authGetUsersDropdown,
     createChat as authCreateChat,
@@ -52,6 +53,9 @@ class Store {
             return false;
         }
         return message;
+    };
+    postMessageWS = (chat_id, text) => {
+        authPostMessageWS(chat_id, this.user.token, text);
     };
     getMessages = async (chat_id) => {
         runInAction(() => this.gettingChatMessages = true);

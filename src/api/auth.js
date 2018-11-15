@@ -1,4 +1,7 @@
+import io from 'socket.io-client';
+
 const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : 'http://localhost:3001/';
+const socket = io(BASE_URL);
 
 const register = async (user) => {
     const registerURL = BASE_URL + 'auth/register';
@@ -62,6 +65,9 @@ const getUsersChats = async (token) => {
     }
     return response;
 };
+const postMessageWS = (chat_id, token, text) => {
+    socket.emit('chat_message', {token, text, chat_id});
+};
 const postMessage = async (chat_id, token, text) => {
     const chatURL = BASE_URL + 'chats/message/' + chat_id;
     let response = await fetch(chatURL, {
@@ -110,4 +116,4 @@ const createChat = async (chat_users, chat_name, token) => {
     return response;
 };
 
-export {register, login, getMessages, postMessage, getUsersChats, getUsersDropdown, createChat}
+export {register, login, getMessages, postMessage, postMessageWS, getUsersChats, getUsersDropdown, createChat}

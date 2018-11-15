@@ -6,7 +6,6 @@ import ChatListItem from './ChatListItem';
 import NewChatModal from '../Modals/NewChatModal';
 import MessageList from './MessageList';
 
-
 class Chat extends Component {
     state = {
         chat_name: '',
@@ -29,7 +28,8 @@ class Chat extends Component {
                 username: this.props.mainStore.user.username
             }]
         });
-        this.props.mainStore.postMessage(this.selectedChatID, this.state.message);
+        // this.props.mainStore.postMessage(this.selectedChatID, this.state.message);
+        this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message);
         this.setState({message: ''});
     };
 
