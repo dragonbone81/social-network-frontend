@@ -1,3 +1,5 @@
+import io from 'socket.io-client';
+
 const BASE_URL = process.env.REACT_APP_BASE_URL ? process.env.REACT_APP_BASE_URL : 'http://localhost:3001/';
 const GIFY_API_KEY = 'dc6zaTOxFJmzC';
 const GIFY_API_URL = 'api.giphy.com/v1/gifs/search';
@@ -135,8 +137,9 @@ const createChat = async (chat_users, chat_name, token) => {
     }
     return response;
 };
-
+const socket = io(BASE_URL);
 export {
+    socket,
     register,
     login,
     getMessages,

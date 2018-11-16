@@ -69,6 +69,7 @@
     background-color: #e2fff8;
     overflow: auto;
     overflow-x: hidden;
+    border-radius: 10px;
 }
 
 .overlay {
@@ -104,7 +105,7 @@
 
 .chat-div {
     max-width: 900px;
-    min-width: 500px;
+    min-width: 600px;
     height: 100%;
     margin: auto;
     background-color: rgba(255, 255, 255, 0.90);

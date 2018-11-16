@@ -11,6 +11,7 @@ import {
     getUsersDropdown as authGetUsersDropdown,
     createChat as authCreateChat,
     searchGIFY as authSearchGIFY,
+    socket as authSocket,
 } from '../api/auth';
 
 // configure({enforceActions: 'always'});
@@ -57,14 +58,14 @@ class Store {
         }
         return message;
     };
-    joinChatWS = (chat_id, socket) => {
-        authJoinChatWS(chat_id, this.user.token, socket);
+    joinChatWS = (chat_id) => {
+        authJoinChatWS(chat_id, this.user.token, this.socket);
     };
-    typingChatWS = (chat_id, socket, isTyping) => {
-        authTypingChatWS(chat_id, this.user.token, isTyping, socket);
+    typingChatWS = (chat_id, isTyping) => {
+        authTypingChatWS(chat_id, this.user.token, isTyping, this.socket);
     };
-    postMessageWS = (chat_id, text, type, socket) => {
-        authPostMessageWS(chat_id, this.user.token, text, type, socket);
+    postMessageWS = (chat_id, text, type) => {
+        authPostMessageWS(chat_id, this.user.token, text, type, this.socket);
     };
     getMessages = async (chat_id) => {
         runInAction(() => this.gettingChatMessages = true);
@@ -109,6 +110,7 @@ class Store {
         email: '',
         token: '',
     };
+    socket = authSocket;
     searchedGIFs = [];
     realTime = true;
     typing = false;
@@ -119,6 +121,7 @@ class Store {
 
 decorate(Store, {
     user: observable,
+    socket: observable,
     othersTyping: observable,
     searchedGIFs: observable,
     typing: observable,

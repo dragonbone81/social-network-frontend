@@ -6,7 +6,6 @@ import ChatListItem from './ChatListItem';
 import NewChatModal from '../Modals/NewChatModal';
 import MessageList from './MessageList';
 import GifBox from './GifBox';
-import io from 'socket.io-client';
 
 class Chat extends Component {
     state = {
@@ -16,7 +15,6 @@ class Chat extends Component {
         chats: [],
         selectedChat: 0,
         newChatModalOpen: false,
-        socket: io('http://localhost:3001/'),
         unreadMessages: {},
         typingNotifSent: false,
         chatTimeOut: null,
@@ -43,12 +41,12 @@ class Chat extends Component {
             if (this.state.message === '')
                 return;
             this.props.mainStore.typing = false;
-            this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, false);
+            this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, false);
             this.setState({typingNotifSent: false});
             clearTimeout(this.state.chatTimeOut);
             this.addMessageToList(this.state.message, this.props.mainStore.user.username, this.state.chatType);
             if (this.props.mainStore.realTime) {
-                this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message, this.state.chatType, this.state.socket);
+                this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message, this.state.chatType);
             } else {
                 this.props.mainStore.postMessage(this.selectedChatID, this.state.message, this.state.chatType);
             }
@@ -87,7 +85,7 @@ class Chat extends Component {
                 }
             });
         });
-        this.state.socket.on('message', (data) => {
+        this.props.mainStore.socket.on('message', (data) => {
             if (data.chat_id === this.state.chats[this.state.selectedChat].chat_id) {
                 data.message.position = 'left';
                 this.setState({
@@ -102,7 +100,7 @@ class Chat extends Component {
             }
             console.log(data, this.state.chats[this.state.selectedChat].chat_id);
         });
-        this.state.socket.on('typing', (data) => {
+        this.props.mainStore.socket.on('typing', (data) => {
             if (data.chat_id === this.state.chats[this.state.selectedChat].chat_id) {
                 if (data.isTyping) {
                     this.props.mainStore.othersTyping = true;
@@ -112,13 +110,9 @@ class Chat extends Component {
             }
         })
     }
-
-    joinAChat = (chat_id) => {
-        this.props.mainStore.joinChatWS(chat_id, this.state.socket);
-    };
     joinAllChats = () => {
         this.state.chats.forEach((chat) => {
-            this.props.mainStore.joinChatWS(chat.chat_id, this.state.socket);
+            this.props.mainStore.joinChatWS(chat.chat_id);
         })
     };
     refreshUserChats = () => {
@@ -246,7 +240,7 @@ class Chat extends Component {
                                                            if (this.state.chatType === 'messages') {
                                                                if (!this.state.typingNotifSent) {
                                                                    this.props.mainStore.typing = true;
-                                                                   this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, true);
+                                                                   this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, true);
                                                                    this.setState({typingNotifSent: true});
                                                                } else {
                                                                    clearTimeout(this.state.chatTimeOut);
@@ -254,7 +248,7 @@ class Chat extends Component {
                                                                this.setState({
                                                                    chatTimeOut: setTimeout(() => {
                                                                        this.props.mainStore.typing = false;
-                                                                       this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, false);
+                                                                       this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, false);
                                                                        this.setState({typingNotifSent: false});
                                                                    }, 1000)
                                                                })
@@ -272,7 +266,7 @@ class Chat extends Component {
                                             {this.state.chatType === 'gifs' ?
                                                 <GifBox scrollToBottom={this.scrollToBottom}
                                                         chat_id={this.state.chats[this.state.selectedChat].chat_id}
-                                                        socket={this.state.socket}
+                                                        socket={this.props.mainStore.socket}
                                                         addMessageToList={this.addMessageToList}/> : null}
                                         </div>
                                     </>
