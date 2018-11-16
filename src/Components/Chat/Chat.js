@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import {inject, observer} from "mobx-react";
-import {Form, Button, Icon, List} from 'semantic-ui-react';
+import {Form, Button, Icon, List, Message, Input} from 'semantic-ui-react';
 import {withRouter} from 'react-router-dom';
 import ChatListItem from './ChatListItem';
 import NewChatModal from '../Modals/NewChatModal';
 import MessageList from './MessageList';
+import GifBox from './GifBox';
 import io from 'socket.io-client';
 
 class Chat extends Component {
@@ -17,6 +18,9 @@ class Chat extends Component {
         newChatModalOpen: false,
         socket: io('http://localhost:3001/'),
         unreadMessages: {},
+        typingNotifSent: false,
+        cahtTimeOut: null,
+        chatType: 'messages',
     };
 
     get selectedChatID() {
@@ -24,16 +28,30 @@ class Chat extends Component {
     };
 
     submit = () => {
-        this.setState({
-            messages: [...this.state.messages, {
-                text: this.state.message,
-                position: 'right',
-                username: this.props.mainStore.user.username
-            }]
-        });
-        // this.props.mainStore.postMessage(this.selectedChatID, this.state.message);
-        this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message, this.state.socket);
-        this.setState({message: ''});
+        if (this.state.chatType === 'messages') {
+            if (this.state.message === '')
+                return;
+            this.props.mainStore.typing = false;
+            this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, false);
+            this.setState({typingNotifSent: false});
+            clearTimeout(this.state.chatTimeOut);
+            this.setState({
+                messages: [...this.state.messages, {
+                    text: this.state.message,
+                    position: 'right',
+                    username: this.props.mainStore.user.username,
+                    type: this.state.chatType,
+                }]
+            });
+            if (this.props.mainStore.realTime) {
+                this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message, this.state.chatType, this.state.socket);
+            } else {
+                this.props.mainStore.postMessage(this.selectedChatID, this.state.message, this.state.chatType);
+            }
+            this.setState({message: ''});
+        } else {
+            this.props.mainStore.searchGIFY(this.state.message);
+        }
     };
 
     loadMessages = () => {
@@ -79,6 +97,15 @@ class Chat extends Component {
                 localStorage.setItem("unreadMessages", JSON.stringify(this.state.unreadMessages))
             }
             console.log(data, this.state.chats[this.state.selectedChat].chat_id);
+        });
+        this.state.socket.on('typing', (data) => {
+            if (data.chat_id === this.state.chats[this.state.selectedChat].chat_id) {
+                if (data.isTyping) {
+                    this.props.mainStore.othersTyping = true;
+                } else {
+                    this.props.mainStore.othersTyping = false;
+                }
+            }
         })
     }
 
@@ -151,8 +178,9 @@ class Chat extends Component {
                                         })}
                                     </List>
                             }
-                            <Button icon='plus' onClick={this.openNewChatModal}/>
                         </div>
+                        <br/>
+                        <Button icon='plus' onClick={this.openNewChatModal}/>
                     </div>
                     <div className="chat">
                         <>
@@ -166,6 +194,13 @@ class Chat extends Component {
                                             {this.props.mainStore.gettingChatMessages || this.props.mainStore.gettingUsersChats ?
                                                 <div><Icon style={{marginTop: 50}} size="huge" name="spinner" loading/>
                                                 </div> : <MessageList messages={this.state.messages}/>}
+                                            {this.props.mainStore.othersTyping ?
+                                                <Message positive icon>
+                                                    <Icon name='circle notched' loading/>
+                                                    <Message.Content>
+                                                        <Message.Header>Someone is typing...</Message.Header>
+                                                    </Message.Content>
+                                                </Message> : null}
                                             <div style={{float: "left", clear: "both"}}
                                                  ref={(el) => {
                                                      this.messagesEnd = el;
@@ -174,11 +209,49 @@ class Chat extends Component {
                                         </div>
                                         <div className="messages-form">
                                             <Form onSubmit={this.submit}>
-                                                <Form.Input required type='text' fluid
-                                                            placeholder='Type your message...'
-                                                            value={this.state.message}
-                                                            onChange={({target}) => this.setState({message: target.value})}/>
+                                                <Input type='text' fluid
+                                                       placeholder={this.state.chatType !== 'messages' ? 'Search for GIF...' : 'Type your message...'}
+                                                       value={this.state.message}
+                                                       label={
+                                                           <Button
+                                                               onClick={() => this.state.chatType === 'messages' ? this.setState({chatType: 'gifs'}) : this.setState({chatType: 'messages'})}
+                                                               type='button' icon
+                                                               labelPosition='left'>
+                                                               {this.state.chatType !== 'messages' ?
+                                                                   <>
+                                                                       <Icon name='picture'/>
+                                                                       GIFs
+                                                                   </> :
+                                                                   <>
+                                                                       <Icon name='chat'/>
+                                                                       Messages
+                                                                   </>
+                                                               }
+                                                           </Button>
+                                                       }
+                                                       labelPosition='left'
+                                                       onChange={({target}) => {
+                                                           this.setState({message: target.value});
+                                                           if (this.state.chatType === 'messages') {
+                                                               if (!this.state.typingNotifSent) {
+                                                                   this.props.mainStore.typing = true;
+                                                                   this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, true);
+                                                                   this.setState({typingNotifSent: true});
+                                                               } else {
+                                                                   clearTimeout(this.state.chatTimeOut);
+                                                               }
+                                                               this.setState({
+                                                                   chatTimeOut: setTimeout(() => {
+                                                                       this.props.mainStore.typing = false;
+                                                                       this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, false);
+                                                                       this.setState({typingNotifSent: false});
+                                                                   }, 1000)
+                                                               })
+                                                           }
+                                                       }}/>
                                             </Form>
+                                            {this.state.chatType === 'gifs' ?
+                                                <GifBox/> : null}
                                         </div>
                                     </>
                                 </div> : null}

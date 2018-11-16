@@ -5,10 +5,12 @@ import {
     getMessages as authGetMessages,
     postMessage as authPostMessage,
     postMessageWS as authPostMessageWS,
+    typingChatWS as authTypingChatWS,
     joinChatWS as authJoinChatWS,
     getUsersChats as authGetUsersChats,
     getUsersDropdown as authGetUsersDropdown,
     createChat as authCreateChat,
+    searchGIFY as authSearchGIFY,
 } from '../api/auth';
 
 // configure({enforceActions: 'always'});
@@ -48,8 +50,8 @@ class Store {
         });
         return true;
     };
-    postMessage = async (chat_id, text) => {
-        const message = await authPostMessage(chat_id, this.user.token, text);
+    postMessage = async (chat_id, text, type) => {
+        const message = await authPostMessage(chat_id, this.user.token, text, type);
         if (!message) {
             return false;
         }
@@ -58,8 +60,11 @@ class Store {
     joinChatWS = (chat_id, socket) => {
         authJoinChatWS(chat_id, this.user.token, socket);
     };
-    postMessageWS = (chat_id, text, socket) => {
-        authPostMessageWS(chat_id, this.user.token, text, socket);
+    typingChatWS = (chat_id, socket, isTyping) => {
+        authTypingChatWS(chat_id, this.user.token, isTyping, socket);
+    };
+    postMessageWS = (chat_id, text, type, socket) => {
+        authPostMessageWS(chat_id, this.user.token, text, type, socket);
     };
     getMessages = async (chat_id) => {
         runInAction(() => this.gettingChatMessages = true);
@@ -93,6 +98,10 @@ class Store {
         }
         return chat;
     };
+    searchGIFY = async (query) => {
+        this.searchedGIFs = await authSearchGIFY(query);
+    };
+
     user = {
         username: '',
         firstname: '',
@@ -100,16 +109,25 @@ class Store {
         email: '',
         token: '',
     };
+    searchedGIFs = [];
+    realTime = true;
+    typing = false;
+    othersTyping = false;
     gettingUsersChats = false;
     gettingChatMessages = false;
 }
 
 decorate(Store, {
     user: observable,
+    othersTyping: observable,
+    searchedGIFs: observable,
+    typing: observable,
+    realTime: observable,
     gettingUsersChats: observable,
     gettingChatMessages: observable,
     register: action,
     login: action,
+    searchGIFY: action,
     hydrateStoreWithLocalStorage: action,
 });
 
