@@ -11,7 +11,8 @@ class MessageList extends Component {
                         message.position = 'right';
                     else
                         message.position = 'left';
-                    return <Message firstMessage={index !== 0 && message.username !== arr[index - 1].username}
+                    return <Message scrollToBottom={this.props.scrollToBottom}
+                                    firstMessage={index !== 0 && message.username !== arr[index - 1].username}
                                     key={index} message={message}/>
                 })}
             </>

@@ -19,7 +19,8 @@ class Chat extends Component {
         socket: io('http://localhost:3001/'),
         unreadMessages: {},
         typingNotifSent: false,
-        cahtTimeOut: null,
+        chatTimeOut: null,
+        // gifTimeOut: null,
         chatType: 'messages',
     };
 
@@ -27,6 +28,16 @@ class Chat extends Component {
         return this.state.chats.length > 0 ? this.state.chats[this.state.selectedChat].chat_id : -1;
     };
 
+    addMessageToList = (text, username, type) => {
+        this.setState({
+            messages: [...this.state.messages, {
+                text: text,
+                position: 'right',
+                username: username,
+                type: type,
+            }]
+        });
+    };
     submit = () => {
         if (this.state.chatType === 'messages') {
             if (this.state.message === '')
@@ -35,14 +46,7 @@ class Chat extends Component {
             this.props.mainStore.typingChatWS(this.state.chats[this.state.selectedChat].chat_id, this.state.socket, false);
             this.setState({typingNotifSent: false});
             clearTimeout(this.state.chatTimeOut);
-            this.setState({
-                messages: [...this.state.messages, {
-                    text: this.state.message,
-                    position: 'right',
-                    username: this.props.mainStore.user.username,
-                    type: this.state.chatType,
-                }]
-            });
+            this.addMessageToList(this.state.message, this.props.mainStore.user.username, this.state.chatType);
             if (this.props.mainStore.realTime) {
                 this.props.mainStore.postMessageWS(this.selectedChatID, this.state.message, this.state.chatType, this.state.socket);
             } else {
@@ -186,14 +190,17 @@ class Chat extends Component {
                         <>
                             <div>{this.props.mainStore.gettingChatMessages || this.props.mainStore.gettingUsersChats ? 'Loading...' : null}</div>
                             <div>{!this.props.mainStore.gettingUsersChats && this.state.chats.length === 0 ? 'You have no chats :(' : null}</div>
-                            <div>{!this.props.mainStore.gettingUsersChats && !this.props.mainStore.gettingChatMessages && this.state.chats.length !== 0 ? this.state.chats[this.state.selectedChat].chat_name : null}</div>
+                            <div>
+                                <h3>{!this.props.mainStore.gettingUsersChats && !this.props.mainStore.gettingChatMessages && this.state.chats.length !== 0 ? this.state.chats[this.state.selectedChat].chat_name : null}</h3>
+                            </div>
                             {!this.props.mainStore.gettingUsersChats && this.state.chats.length !== 0 ?
                                 <div className="chat-inside">
                                     <>
                                         <div className="messages-div">
                                             {this.props.mainStore.gettingChatMessages || this.props.mainStore.gettingUsersChats ?
                                                 <div><Icon style={{marginTop: 50}} size="huge" name="spinner" loading/>
-                                                </div> : <MessageList messages={this.state.messages}/>}
+                                                </div> : <MessageList scrollToBottom={this.scrollToBottom}
+                                                                      messages={this.state.messages}/>}
                                             {this.props.mainStore.othersTyping ?
                                                 <Message positive icon>
                                                     <Icon name='circle notched' loading/>
@@ -214,10 +221,14 @@ class Chat extends Component {
                                                        value={this.state.message}
                                                        label={
                                                            <Button
-                                                               onClick={() => this.state.chatType === 'messages' ? this.setState({chatType: 'gifs'}) : this.setState({chatType: 'messages'})}
+                                                               onClick={() => {
+                                                                   this.state.chatType === 'messages' ? this.setState({chatType: 'gifs'}) : this.setState({chatType: 'messages'});
+                                                                   this.setState({message: ''});
+                                                                   this.props.mainStore.searchedGIFs = [];
+                                                               }}
                                                                type='button' icon
                                                                labelPosition='left'>
-                                                               {this.state.chatType !== 'messages' ?
+                                                               {this.state.chatType !== 'gifs' ?
                                                                    <>
                                                                        <Icon name='picture'/>
                                                                        GIFs
@@ -248,10 +259,21 @@ class Chat extends Component {
                                                                    }, 1000)
                                                                })
                                                            }
+                                                           // else {
+                                                           //     clearTimeout(this.state.gifTimeOut);
+                                                           //     this.setState({
+                                                           //         gifTimeOut: setTimeout(() => {
+                                                           //             this.submit();
+                                                           //         }, 300)
+                                                           //     });
+                                                           // }
                                                        }}/>
                                             </Form>
                                             {this.state.chatType === 'gifs' ?
-                                                <GifBox/> : null}
+                                                <GifBox scrollToBottom={this.scrollToBottom}
+                                                        chat_id={this.state.chats[this.state.selectedChat].chat_id}
+                                                        socket={this.state.socket}
+                                                        addMessageToList={this.addMessageToList}/> : null}
                                         </div>
                                     </>
                                 </div> : null}

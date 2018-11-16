@@ -45,7 +45,7 @@
 .chat-sidebar {
     width: 150px;
     text-align: left;
-    max-height: 400px;
+    max-height: calc(100% - 55px);
     overflow-y: scroll;
     will-change: transform;
 }
@@ -60,12 +60,18 @@
     margin-right: 10px;
 }
 
+.empty-search {
+    padding-top: 80px;
+}
+
 .gif-box {
     height: 200px;
     background-color: #e2fff8;
     overflow: auto;
+    overflow-x: hidden;
 }
-.overlay{
+
+.overlay {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -74,14 +80,20 @@
     opacity: 0;
     transition: .3s ease;
 }
+
 .container {
     position: relative;
 }
+
 .container:hover .overlay {
     opacity: 1;
 }
+.message-img{
+    border-radius: 10px;
+}
 .send-icon {
-    color: white;
+    cursor: pointer;
+    color: rgb(154, 255, 163);
     position: absolute;
     top: 50%;
     left: 50%;

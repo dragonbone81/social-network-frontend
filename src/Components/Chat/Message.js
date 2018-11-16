@@ -8,10 +8,15 @@ const Message = (props) => {
             <div className="chat-list-div" style={{
                 textAlign: props.message.position,
             }}>
-                <span className="chat-message-item"
-                      style={{backgroundColor: props.message.position === 'right' ? '#d0ffcb' : '#e2e2e2'}}>
-                {props.message.text}
-                </span>
+                {props.message.type === 'messages' ?
+                    <span className="chat-message-item"
+                          style={{backgroundColor: props.message.position === 'right' ? '#d0ffcb' : '#e2e2e2'}}>
+
+                    {props.message.text}
+                </span> :
+                    <img alt="message" className="message-img" onLoad={props.scrollToBottom} width={300}
+                         src={props.message.text}/>
+                }
             </div>
         </div>
     );
