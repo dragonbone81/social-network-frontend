@@ -1,18 +1,29 @@
 import React, {Component} from 'react';
-import {Form, List, Modal} from 'semantic-ui-react';
+import {Form, List, Modal, Icon} from 'semantic-ui-react';
 import {inject, observer} from "mobx-react";
 
-class NewChatModal extends Component {
+class EditChatModal extends Component {
     state = {
         loading: false,
         options: [],
         users: [],
-        placeholder: 'search for user',
+        placeholder: 'add a user',
         value: '',
         error: null,
         loader: false,
-        chat_name: '',
+        chat_name: this.props.chat.chat_name,
     };
+
+    async componentDidUpdate(prevProps) {
+        if (!prevProps.open && this.props.open) {
+            this.setState({chat_name: this.props.chat.chat_name});
+            const users = await this.props.mainStore.getUsersInChat(this.props.chat.chat_id);
+            if (users) {
+                this.setState({users: users.map((user) => user.username)})
+            }
+        }
+    }
+
     handleSearchChange = (e, {searchQuery}) => {
         if (searchQuery.length >= 3) {
             this.setState({loading: true});
@@ -47,7 +58,7 @@ class NewChatModal extends Component {
         if (this.state.loader)
             return;
         this.setState({loader: true});
-        const response = await this.props.createNewChat(this.state.users, this.state.chat_name);
+        const response = await this.props.editChat(this.state.users, this.state.chat_name, this.props.chat.chat_id);
         if (response) {
             this.setState({loader: false});
             this.props.refreshUserChats();
@@ -73,10 +84,11 @@ class NewChatModal extends Component {
     render() {
         return (
             <Modal open={this.props.open} onClose={this.close} closeIcon>
-                <Modal.Header>Create Chat</Modal.Header>
+                <Modal.Header>Edit Chat</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.submit}>
-                        <Form.Input required type='text' fluid placeholder='Chat name...' value={this.state.chat_name}
+                        <Form.Input required type='text' fluid placeholder='Chat name...'
+                                    value={this.state.chat_name}
                                     onChange={({target}) => this.setState({chat_name: target.value})}/>
                         <Form.Dropdown
                             fluid
@@ -95,10 +107,14 @@ class NewChatModal extends Component {
                         {this.state.error ? <p>User already entered</p> : null}
                         <List>
                             {this.state.users.map((user) => {
-                                return <List.Item key={user}>{user}</List.Item>
+                                return <List.Item
+                                    key={user}>{user} {user === this.props.mainStore.user.username ? null : <Icon
+                                    onClick={() => this.setState({users: this.state.users.filter((userOld) => userOld !== user)})}
+                                    style={{cursor: 'pointer'}}
+                                    name='close'/>}</List.Item>
                             })}
                         </List>
-                        <Form.Button loading={this.state.loader}>Create Chat</Form.Button>
+                        <Form.Button loading={this.state.loader}>Edit Chat</Form.Button>
                     </Form>
                 </Modal.Content>
             </Modal>
@@ -106,4 +122,4 @@ class NewChatModal extends Component {
     }
 }
 
-export default inject("mainStore")(observer(NewChatModal));
+export default inject("mainStore")(observer(EditChatModal));

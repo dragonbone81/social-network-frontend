@@ -4,6 +4,7 @@ import {Form, Button, Icon, List, Message, Input} from 'semantic-ui-react';
 import {withRouter} from 'react-router-dom';
 import ChatListItem from './ChatListItem';
 import NewChatModal from '../Modals/NewChatModal';
+import EditChatModal from '../Modals/EditChatModal';
 import MessageList from './MessageList';
 import GifBox from './GifBox';
 
@@ -15,6 +16,7 @@ class Chat extends Component {
         chats: [],
         selectedChat: 0,
         newChatModalOpen: false,
+        editChatModalOpen: false,
         unreadMessages: {},
         typingNotifSent: false,
         chatTimeOut: null,
@@ -110,6 +112,7 @@ class Chat extends Component {
             }
         })
     }
+
     joinAllChats = () => {
         this.state.chats.forEach((chat) => {
             this.props.mainStore.joinChatWS(chat.chat_id);
@@ -147,8 +150,17 @@ class Chat extends Component {
     openNewChatModal = () => {
         this.setState({newChatModalOpen: true})
     };
+    closeEditChatModal = () => {
+        this.setState({editChatModalOpen: false})
+    };
+    openEditChatModal = () => {
+        this.setState({editChatModalOpen: true})
+    };
     createNewChat = (users, chat_name) => {
         return this.props.mainStore.createChat(users, chat_name);
+    };
+    editChat = (users, chat_name, chat_id) => {
+        return this.props.mainStore.editChat(users, chat_name, chat_id);
     };
 
     render() {
@@ -157,6 +169,9 @@ class Chat extends Component {
                 <NewChatModal createNewChat={this.createNewChat} refreshUserChats={this.refreshUserChats}
                               open={this.state.newChatModalOpen}
                               onClose={this.closeNewChatModal}/>
+                {this.state.chats.length > 0 ? <EditChatModal refreshUserChats={this.refreshUserChats} editChat={this.editChat} chat={this.state.chats[this.state.selectedChat]}
+                                                              open={this.state.editChatModalOpen}
+                                                              onClose={this.closeEditChatModal}/> : null}
                 <div className="chat-div">
                     <div className="chat-sidebar-container">
                         <div className="chat-sidebar" style={{textAlign: 'center'}}>
@@ -185,7 +200,13 @@ class Chat extends Component {
                             <div>{this.props.mainStore.gettingChatMessages || this.props.mainStore.gettingUsersChats ? 'Loading...' : null}</div>
                             <div>{!this.props.mainStore.gettingUsersChats && this.state.chats.length === 0 ? 'You have no chats :(' : null}</div>
                             <div>
-                                <h3>{!this.props.mainStore.gettingUsersChats && !this.props.mainStore.gettingChatMessages && this.state.chats.length !== 0 ? this.state.chats[this.state.selectedChat].chat_name : null}</h3>
+                                <h3>{!this.props.mainStore.gettingUsersChats && !this.props.mainStore.gettingChatMessages && this.state.chats.length !== 0 ?
+                                    <div>
+                                        {this.state.chats[this.state.selectedChat].chat_name}
+                                        <Icon onClick={this.openEditChatModal}
+                                              style={{paddingLeft: 30, cursor: 'pointer'}} name="edit"/>
+                                    </div>
+                                    : null}</h3>
                             </div>
                             {!this.props.mainStore.gettingUsersChats && this.state.chats.length !== 0 ?
                                 <div className="chat-inside">

@@ -11,6 +11,8 @@ import {
     getUsersDropdown as authGetUsersDropdown,
     createChat as authCreateChat,
     searchGIFY as authSearchGIFY,
+    getUsersInChat as authGetUsersInChat,
+    editChat as authEditChat,
     socket as authSocket,
 } from '../api/auth';
 
@@ -90,7 +92,7 @@ class Store {
         if (!users) {
             return false;
         }
-        return users.filter((user) => user.username !== this.user.username);
+        return users;
     };
     createChat = async (users, chat_name) => {
         const chat = await authCreateChat(users, chat_name, this.user.token);
@@ -99,8 +101,22 @@ class Store {
         }
         return chat;
     };
+    editChat = async (users, chat_name, chat_id) => {
+        const chat = await authEditChat(users, chat_name, chat_id, this.user.token);
+        if (!chat) {
+            return false;
+        }
+        return chat;
+    };
     searchGIFY = async (query) => {
         this.searchedGIFs = await authSearchGIFY(query);
+    };
+    getUsersInChat = async (chat_id) => {
+        const users = await authGetUsersInChat(chat_id, this.user.token);
+        if (!users) {
+            return false;
+        }
+        return users;
     };
 
     user = {

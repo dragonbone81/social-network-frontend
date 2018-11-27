@@ -3,7 +3,7 @@ import {List, Label} from 'semantic-ui-react';
 
 const ChatListItem = (props) => {
     return (
-        <List.Item active={props.active === props.index} onClick={props.onClick}>
+        <List.Item className="test1" active={props.active === props.index} onClick={props.onClick}>
             <List.Content>
                 <List.Description>
                     {/*<div className="course-item">*/}

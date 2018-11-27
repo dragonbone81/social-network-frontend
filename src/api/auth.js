@@ -137,6 +137,37 @@ const createChat = async (chat_users, chat_name, token) => {
     }
     return response;
 };
+const editChat = async (chat_users, chat_name, chat_id, token) => {
+    const chatURL = BASE_URL + `chats/edit/${chat_id}`;
+    let response = await fetch(chatURL, {
+        method: 'POST',
+        body: JSON.stringify({chat_name, chat_users}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+const getUsersInChat = async (chat_id, token) => {
+    const usersURL = BASE_URL + `chats/users/${chat_id}`;
+    let response = await fetch(usersURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
 const socket = io(BASE_URL);
 export {
     socket,
@@ -151,4 +182,6 @@ export {
     getUsersDropdown,
     createChat,
     searchGIFY,
+    getUsersInChat,
+    editChat,
 }
