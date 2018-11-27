@@ -162,6 +162,11 @@ class Chat extends Component {
     editChat = (users, chat_name, chat_id) => {
         return this.props.mainStore.editChat(users, chat_name, chat_id);
     };
+    deleteChat = async () => {
+        await this.props.mainStore.deleteChat(this.state.chats[this.state.selectedChat].chat_id);
+        this.refreshUserChats();
+    };
+
 
     render() {
         return (
@@ -169,9 +174,11 @@ class Chat extends Component {
                 <NewChatModal createNewChat={this.createNewChat} refreshUserChats={this.refreshUserChats}
                               open={this.state.newChatModalOpen}
                               onClose={this.closeNewChatModal}/>
-                {this.state.chats.length > 0 ? <EditChatModal refreshUserChats={this.refreshUserChats} editChat={this.editChat} chat={this.state.chats[this.state.selectedChat]}
-                                                              open={this.state.editChatModalOpen}
-                                                              onClose={this.closeEditChatModal}/> : null}
+                {this.state.chats.length > 0 ?
+                    <EditChatModal deleteChat={this.deleteChat} refreshUserChats={this.refreshUserChats}
+                                   editChat={this.editChat} chat={this.state.chats[this.state.selectedChat]}
+                                   open={this.state.editChatModalOpen}
+                                   onClose={this.closeEditChatModal}/> : null}
                 <div className="chat-div">
                     <div className="chat-sidebar-container">
                         <div className="chat-sidebar" style={{textAlign: 'center'}}>

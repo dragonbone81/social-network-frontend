@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, List, Modal, Icon} from 'semantic-ui-react';
+import {Form, List, Modal, Icon, Label, Button} from 'semantic-ui-react';
 import {inject, observer} from "mobx-react";
 
 class EditChatModal extends Component {
@@ -114,7 +114,17 @@ class EditChatModal extends Component {
                                     name='close'/>}</List.Item>
                             })}
                         </List>
-                        <Form.Button loading={this.state.loader}>Edit Chat</Form.Button>
+                        <Button loading={this.state.loader} as='div' labelPosition='right'>
+                            <Button icon>
+                                Edit Chat
+                            </Button>
+                            <Label onClick={() => {
+                                this.props.deleteChat();
+                                this.close();
+                            }} color='red' basic pointing='left'>
+                                <Icon name='close'/>
+                            </Label>
+                        </Button>
                     </Form>
                 </Modal.Content>
             </Modal>

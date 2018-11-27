@@ -13,6 +13,7 @@ import {
     searchGIFY as authSearchGIFY,
     getUsersInChat as authGetUsersInChat,
     editChat as authEditChat,
+    deleteChat as authDeleteChat,
     socket as authSocket,
 } from '../api/auth';
 
@@ -103,6 +104,13 @@ class Store {
     };
     editChat = async (users, chat_name, chat_id) => {
         const chat = await authEditChat(users, chat_name, chat_id, this.user.token);
+        if (!chat) {
+            return false;
+        }
+        return chat;
+    };
+    deleteChat = async (chat_id) => {
+        const chat = await authDeleteChat(chat_id, this.user.token);
         if (!chat) {
             return false;
         }

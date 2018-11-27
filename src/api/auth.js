@@ -153,6 +153,21 @@ const editChat = async (chat_users, chat_name, chat_id, token) => {
     }
     return response;
 };
+const deleteChat = async (chat_id, token) => {
+    const chatURL = BASE_URL + `chats/delete/${chat_id}`;
+    let response = await fetch(chatURL, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
 const getUsersInChat = async (chat_id, token) => {
     const usersURL = BASE_URL + `chats/users/${chat_id}`;
     let response = await fetch(usersURL, {
@@ -184,4 +199,5 @@ export {
     searchGIFY,
     getUsersInChat,
     editChat,
+    deleteChat,
 }
