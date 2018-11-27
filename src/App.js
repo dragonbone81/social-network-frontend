@@ -1,4 +1,4 @@
-import {Switch, Route, withRouter} from 'react-router-dom';
+import {Switch, Route, withRouter, Redirect} from 'react-router-dom';
 import React, {Component} from 'react';
 import Register from './MainRoutes/Register';
 import Login from './MainRoutes/Login';
@@ -16,6 +16,7 @@ class App extends Component {
                     <Route exact path='/register' component={Register}/>
                     <Route exact path='/login' component={Login}/>
                     <Route exact path='/chat' component={Chat}/>
+                    <Route component={() => <Redirect to="/chat"/>}/>
                 </Switch>
             </div>
         )
