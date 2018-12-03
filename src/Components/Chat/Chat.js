@@ -114,6 +114,8 @@ class Chat extends Component {
     }
 
     componentWillUnmount() {
+        this.props.mainStore.socket.off('message');
+        this.props.mainStore.socket.off('typing');
         this.state.chats.forEach((chat) => {
             this.props.mainStore.leaveChatWS(chat.chat_id);
         })
