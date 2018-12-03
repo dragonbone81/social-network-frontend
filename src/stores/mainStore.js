@@ -14,6 +14,10 @@ import {
     getUsersInChat as authGetUsersInChat,
     editChat as authEditChat,
     deleteChat as authDeleteChat,
+    getAllPostsAllGroupsForUser as authGetAllPostsAllGroupsForUser,
+    getGroupInfo as authGetGroupInfo,
+    getAllPostsForGroup as authGetAllPostsForGroup,
+    addPost as authAddPost,
     socket as authSocket,
 } from '../api/auth';
 
@@ -60,6 +64,13 @@ class Store {
             return false;
         }
         return message;
+    };
+    addPost = async (group_id, text) => {
+        const post = await authAddPost(group_id, text, this.user.token);
+        if (!post) {
+            return false;
+        }
+        return post;
     };
     joinChatWS = (chat_id) => {
         authJoinChatWS(chat_id, this.user.token, this.socket);
@@ -125,6 +136,27 @@ class Store {
             return false;
         }
         return users;
+    };
+    getAllPostsAllGroupsForUser = async () => {
+        const posts = await authGetAllPostsAllGroupsForUser(this.user.token);
+        if (!posts) {
+            return false;
+        }
+        return posts;
+    };
+    getGroupInfo = async (group_id) => {
+        const group = await authGetGroupInfo(group_id, this.user.token);
+        if (!group) {
+            return false;
+        }
+        return group;
+    };
+    getAllPostsForGroup = async (group_id) => {
+        const posts = await authGetAllPostsForGroup(group_id, this.user.token);
+        if (!posts) {
+            return false;
+        }
+        return posts;
     };
 
     user = {

@@ -168,6 +168,69 @@ const deleteChat = async (chat_id, token) => {
     }
     return response;
 };
+const getAllPostsAllGroupsForUser = async (token) => {
+    const usersURL = BASE_URL + `groups/user/allposts`;
+    let response = await fetch(usersURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+const getGroupInfo = async (group_id, token) => {
+    const groupURL = BASE_URL + `groups/${group_id}`;
+    let response = await fetch(groupURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+const getAllPostsForGroup = async (group_id, token) => {
+    const groupURL = BASE_URL + `groups/posts/${group_id}`;
+    let response = await fetch(groupURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+
+const addPost = async (group_id, text, token) => {
+    const chatURL = BASE_URL + `groups/post/${group_id}`;
+    let response = await fetch(chatURL, {
+        method: 'POST',
+        body: JSON.stringify({text}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+
 const getUsersInChat = async (chat_id, token) => {
     const usersURL = BASE_URL + `chats/users/${chat_id}`;
     let response = await fetch(usersURL, {
@@ -200,4 +263,8 @@ export {
     getUsersInChat,
     editChat,
     deleteChat,
+    getAllPostsAllGroupsForUser,
+    getGroupInfo,
+    getAllPostsForGroup,
+    addPost,
 }

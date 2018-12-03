@@ -15,6 +15,16 @@ class NavBar extends Component {
                         active={activeItem === '/chat'}
                         onClick={() => this.props.history.push('/chat')}
                     />
+                    <Menu.Item
+                        name='/feed'
+                        active={activeItem === '/feed'}
+                        onClick={() => this.props.history.push('/feed')}
+                    />
+                    <Menu.Item
+                        name='/groups'
+                        active={activeItem === '/groups'}
+                        onClick={() => this.props.history.push('/groups')}
+                    />
                     {!!this.props.mainStore.user.token ?
                         <Menu.Item name='logout'
                                    onClick={() => {

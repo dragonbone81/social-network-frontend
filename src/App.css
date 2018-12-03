@@ -89,9 +89,11 @@
 .container:hover .overlay {
     opacity: 1;
 }
-.message-img{
+
+.message-img {
     border-radius: 10px;
 }
+
 .send-icon {
     cursor: pointer;
     color: rgb(154, 255, 163);
@@ -115,6 +117,68 @@
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
+}
+
+.feed-div {
+    max-width: 900px;
+    min-width: 600px;
+    height: 100%;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.90);
+    padding: 20px 0 40px 0;
+    border-radius: 4px;
+    color: #505e6c;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.group-post-item-title {
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    font-weight: bold;
+}
+
+.group-post-item-body {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.group-post-image {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.group-post-user-time {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-form {
+    margin: 0 20px 20px 20px;
+}
+
+.group-post-item {
+    border: 1px solid #c4c4c4;
+    background-color: white;
+    padding: 10px 10px 10px 10px;
+    margin: 20px 20px 20px 20px;
+    border-radius: 5px;
+}
+
+.feed-inside {
+    overflow-y: scroll;
+    height: calc(100% - 20px);
+}
+
+.feed-inside.group {
+    height: calc(100% - 65px);
+}
+
+.feed-items {
+    overflow-y: scroll;
 }
 
 .chat-inside {
@@ -149,7 +213,8 @@
     margin-bottom: 10px;
     margin-right: 5px;
 }
-.test1{
+
+.chat-list-item {
     word-wrap: break-word;
 }
 
@@ -164,4 +229,5 @@
     background: linear-gradient(#be6e80, #a2596b);
     position: relative;
     min-height: 100vh;
+    font-family: 'Open Sans', sans-serif;
 }
