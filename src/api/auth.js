@@ -78,17 +78,26 @@ const getUsersChats = async (token) => {
     }
     return response;
 };
+const joinGroupWS = (group_id, token, socket) => {
+    socket.emit('group_join', {token, group_id});
+};
 const joinChatWS = (chat_id, token, socket) => {
-    console.log('join_sent');
-    socket.emit('join', {token, chat_id});
+    socket.emit('chat_join', {token, chat_id});
+};
+const leaveChatWS = (chat_id, token, socket) => {
+    socket.emit('chat_leave', {token, chat_id});
+};
+const leaveGroupWS = (group_id, token, socket) => {
+    socket.emit('group_leave', {token, group_id});
 };
 const typingChatWS = (chat_id, token, isTyping, socket) => {
-    console.log('typing_notif_sent');
-    socket.emit('typing', {token, chat_id, isTyping});
+    socket.emit('chat_typing', {token, chat_id, isTyping});
 };
 const postMessageWS = (chat_id, token, text, type, socket) => {
-    console.log('message_sent');
     socket.emit('chat_message', {token, text, chat_id, type});
+};
+const addPostGroupWS = (group_id, token, text, socket) => {
+    socket.emit('group_post', {token, text, group_id});
 };
 const postMessage = async (chat_id, token, text, type) => {
     const chatURL = BASE_URL + 'chats/message/' + chat_id;
@@ -285,7 +294,10 @@ export {
     getMessages,
     postMessage,
     postMessageWS,
+    addPostGroupWS,
+    joinGroupWS,
     joinChatWS,
+    leaveChatWS,
     typingChatWS,
     getUsersChats,
     getUsersDropdown,
@@ -300,4 +312,5 @@ export {
     addPost,
     getGroupsForUser,
     createGroup,
+    leaveGroupWS,
 }

@@ -5,8 +5,12 @@ import {
     getMessages as authGetMessages,
     postMessage as authPostMessage,
     postMessageWS as authPostMessageWS,
+    addPostGroupWS as authAddPostGroupWS,
     typingChatWS as authTypingChatWS,
+    joinGroupWS as authJoinGroupWS,
     joinChatWS as authJoinChatWS,
+    leaveChatWS as authLeaveChatWS,
+    leaveGroupWS as authLeaveGroupWS,
     getUsersChats as authGetUsersChats,
     getUsersDropdown as authGetUsersDropdown,
     createChat as authCreateChat,
@@ -67,6 +71,9 @@ class Store {
         }
         return message;
     };
+    addPostGroupWS = (group_id, text) => {
+        authAddPostGroupWS(group_id, this.user.token, text, this.socket);
+    };
     addPost = async (group_id, text) => {
         const post = await authAddPost(group_id, text, this.user.token);
         if (!post) {
@@ -76,6 +83,15 @@ class Store {
     };
     joinChatWS = (chat_id) => {
         authJoinChatWS(chat_id, this.user.token, this.socket);
+    };
+    leaveChatWS = (chat_id) => {
+        authLeaveChatWS(chat_id, this.user.token, this.socket);
+    };
+    leaveGroupWS = (group_id) => {
+        authLeaveGroupWS(group_id, this.user.token, this.socket);
+    };
+    joinGroupWS = (group_id) => {
+        authJoinGroupWS(group_id, this.user.token, this.socket);
     };
     typingChatWS = (chat_id, isTyping) => {
         authTypingChatWS(chat_id, this.user.token, isTyping, this.socket);

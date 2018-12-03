@@ -17,6 +17,12 @@ class GroupFeed extends Component {
     async componentDidMount() {
         if (!this.props.mainStore.user.username)
             this.props.history.push('/login');
+        this.props.mainStore.joinGroupWS(this.props.match.params.group_id);
+        this.props.mainStore.socket.on('post', (data) => {
+            console.log('groupfeed');
+            delete data.post.group_name;
+            this.setState({posts: [data.post, ...this.state.posts]})
+        });
         this.setState({group: await this.props.mainStore.getGroupInfo(this.props.match.params.group_id)});
         this.setState({posts: (await this.props.mainStore.getAllPostsForGroup(this.props.match.params.group_id)).reverse()});
     }
@@ -25,7 +31,8 @@ class GroupFeed extends Component {
         if (this.state.post === '')
             return;
         this.setState({submitting: true});
-        const post = await this.props.mainStore.addPost(this.props.match.params.group_id, this.state.post);
+        // const post = await this.props.mainStore.addPost(this.props.match.params.group_id, this.state.post);
+        this.props.mainStore.addPostGroupWS(this.props.match.params.group_id, this.state.post);
         this.setState(
             {
                 submitting: false,
@@ -34,13 +41,18 @@ class GroupFeed extends Component {
                     created_at: (new Date()).toString(),
                     firstname: this.props.mainStore.user.firstname,
                     lastname: this.props.mainStore.user.lastname,
-                    post_id: post.post_id,
+                    post_id: this.state.posts.length > 0 ? this.state.posts[0].post_id + 1 : 0,
                     text: this.state.post,
                     username: this.props.mainStore.user.username,
                 }, ...this.state.posts]
             }
         )
     };
+
+    componentWillUnmount() {
+        this.props.mainStore.leaveGroupWS(this.props.match.params.group_id);
+        this.props.mainStore.socket.off('post');
+    }
 
     render() {
         return (

@@ -113,6 +113,12 @@ class Chat extends Component {
         })
     }
 
+    componentWillUnmount() {
+        this.state.chats.forEach((chat) => {
+            this.props.mainStore.leaveChatWS(chat.chat_id);
+        })
+    }
+
     joinAllChats = () => {
         this.state.chats.forEach((chat) => {
             this.props.mainStore.joinChatWS(chat.chat_id);

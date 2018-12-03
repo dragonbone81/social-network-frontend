@@ -7,14 +7,39 @@ import {withRouter} from 'react-router-dom';
 
 class Feed extends Component {
     state = {
-        posts: []
+        posts: [],
+        groups: [],
     };
 
     async componentDidMount() {
         if (!this.props.mainStore.user.username)
             this.props.history.push('/login');
-        this.setState({posts: (await this.props.mainStore.getAllPostsAllGroupsForUser()).reverse()})
+        this.props.mainStore.getAllPostsAllGroupsForUser().then((posts) => {
+            this.setState({posts: posts.reverse()});
+        });
+        this.props.mainStore.getGroupsForUser().then((groups) => {
+            this.setState({groups: groups}, () => {
+                this.joinAllGroups();
+            });
+        });
+        this.props.mainStore.socket.on('post', (data) => {
+            console.log('reg feed');
+            this.setState({posts: [{...data.post, group_id: data.group_id}, ...this.state.posts]})
+        });
     }
+
+    componentWillUnmount() {
+        this.state.groups.forEach((group) => {
+            this.props.mainStore.leaveGroupWS(group.group_id);
+        });
+        this.props.mainStore.socket.off('post');
+    }
+
+    joinAllGroups = () => {
+        this.state.groups.forEach((group) => {
+            this.props.mainStore.joinGroupWS(group.group_id);
+        })
+    };
 
     render() {
         return (
