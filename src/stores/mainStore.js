@@ -10,6 +10,7 @@ import {
     getUsersChats as authGetUsersChats,
     getUsersDropdown as authGetUsersDropdown,
     createChat as authCreateChat,
+    createGroup as authCreateGroup,
     searchGIFY as authSearchGIFY,
     getUsersInChat as authGetUsersInChat,
     editChat as authEditChat,
@@ -18,6 +19,7 @@ import {
     getGroupInfo as authGetGroupInfo,
     getAllPostsForGroup as authGetAllPostsForGroup,
     addPost as authAddPost,
+    getGroupsForUser as authGetGroupsForUser,
     socket as authSocket,
 } from '../api/auth';
 
@@ -113,6 +115,13 @@ class Store {
         }
         return chat;
     };
+    createGroup = async (users, group_name) => {
+        const group = await authCreateGroup(users, group_name, this.user.token);
+        if (!group) {
+            return false;
+        }
+        return group;
+    };
     editChat = async (users, chat_name, chat_id) => {
         const chat = await authEditChat(users, chat_name, chat_id, this.user.token);
         if (!chat) {
@@ -157,6 +166,13 @@ class Store {
             return false;
         }
         return posts;
+    };
+    getGroupsForUser = async () => {
+        const groups = await authGetGroupsForUser(this.user.token);
+        if (!groups) {
+            return false;
+        }
+        return groups;
     };
 
     user = {

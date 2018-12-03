@@ -16,8 +16,11 @@ class GroupPostItem extends Component {
                     <div className="group-post-user-time">
                         <div>
                             {this.props.post.firstname} {this.props.post.lastname}
-                            <Icon name="arrow alternate circle right"/>
-                            <Link to={`/groups/${this.props.post.group_id}`}>{this.props.post.group_name}</Link>
+                            {this.props.post.group_name ? <>
+                                <Icon name="arrow alternate circle right"/>
+                                <Link to={`/groups/${this.props.post.group_id}`}>{this.props.post.group_name}</Link>
+                            </> : null
+                            }
                         </div>
                         <div>
                             {Math.ceil((new Date() - new Date(this.props.post.created_at)) / (1000 * 60))} mins

@@ -137,6 +137,22 @@ const createChat = async (chat_users, chat_name, token) => {
     }
     return response;
 };
+const createGroup = async (group_users, group_name, token) => {
+    const groupsURL = BASE_URL + `groups/new`;
+    let response = await fetch(groupsURL, {
+        method: 'POST',
+        body: JSON.stringify({group_name, group_users}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
 const editChat = async (chat_users, chat_name, chat_id, token) => {
     const chatURL = BASE_URL + `chats/edit/${chat_id}`;
     let response = await fetch(chatURL, {
@@ -213,6 +229,21 @@ const getAllPostsForGroup = async (group_id, token) => {
     }
     return response;
 };
+const getGroupsForUser = async (token) => {
+    const groupURL = BASE_URL + `groups/user`;
+    let response = await fetch(groupURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
 
 const addPost = async (group_id, text, token) => {
     const chatURL = BASE_URL + `groups/post/${group_id}`;
@@ -267,4 +298,6 @@ export {
     getGroupInfo,
     getAllPostsForGroup,
     addPost,
+    getGroupsForUser,
+    createGroup,
 }
