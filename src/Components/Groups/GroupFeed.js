@@ -24,7 +24,11 @@ class GroupFeed extends Component {
             this.setState({posts: [data.post, ...this.state.posts]})
         });
         this.setState({group: await this.props.mainStore.getGroupInfo(this.props.match.params.group_id)});
-        this.setState({posts: (await this.props.mainStore.getAllPostsForGroup(this.props.match.params.group_id)).reverse()});
+        this.setState({
+            posts: (await this.props.mainStore.getAllPostsForGroup(this.props.match.params.group_id)).reverse().map((post) => {
+                return {...post, group_id: this.props.match.params.group_id};
+            })
+        });
     }
 
     submit = async () => {
@@ -44,6 +48,7 @@ class GroupFeed extends Component {
                     post_id: this.state.posts.length > 0 ? this.state.posts[0].post_id + 1 : 0,
                     text: this.state.post,
                     username: this.props.mainStore.user.username,
+                    group_id: this.props.match.params.group_id,
                 }, ...this.state.posts]
             }
         )

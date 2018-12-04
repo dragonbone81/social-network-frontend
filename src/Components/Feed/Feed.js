@@ -15,7 +15,7 @@ class Feed extends Component {
         if (!this.props.mainStore.user.username)
             this.props.history.push('/login');
         this.props.mainStore.getAllPostsAllGroupsForUser().then((posts) => {
-            this.setState({posts: posts.reverse()});
+            this.setState({posts: posts});
         });
         this.props.mainStore.getGroupsForUser().then((groups) => {
             this.setState({groups: groups}, () => {

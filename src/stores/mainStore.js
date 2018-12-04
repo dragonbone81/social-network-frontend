@@ -21,8 +21,11 @@ import {
     deleteChat as authDeleteChat,
     getAllPostsAllGroupsForUser as authGetAllPostsAllGroupsForUser,
     getGroupInfo as authGetGroupInfo,
+    getLikesOnPost as authGetLikesOnPost,
     getAllPostsForGroup as authGetAllPostsForGroup,
     addPost as authAddPost,
+    addLike as authAddLike,
+    deleteLike as authDeleteLike,
     getGroupsForUser as authGetGroupsForUser,
     socket as authSocket,
 } from '../api/auth';
@@ -80,6 +83,20 @@ class Store {
             return false;
         }
         return post;
+    };
+    addLike = async (group_id, post_id) => {
+        const like = await authAddLike(group_id, post_id, this.user.token);
+        if (!like) {
+            return false;
+        }
+        return like;
+    };
+    deleteLike = async (group_id, post_id) => {
+        const like = await authDeleteLike(group_id, post_id, this.user.token);
+        if (!like) {
+            return false;
+        }
+        return like;
     };
     joinChatWS = (chat_id) => {
         authJoinChatWS(chat_id, this.user.token, this.socket);
@@ -175,6 +192,13 @@ class Store {
             return false;
         }
         return group;
+    };
+    getLikesOnPost = async (group_id, post_id) => {
+        const likes = await authGetLikesOnPost(group_id, post_id, this.user.token);
+        if (!likes) {
+            return false;
+        }
+        return likes;
     };
     getAllPostsForGroup = async (group_id) => {
         const posts = await authGetAllPostsForGroup(group_id, this.user.token);

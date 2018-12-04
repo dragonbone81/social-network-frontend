@@ -194,7 +194,7 @@ const deleteChat = async (chat_id, token) => {
     return response;
 };
 const getAllPostsAllGroupsForUser = async (token) => {
-    const usersURL = BASE_URL + `groups/user/allposts`;
+    const usersURL = BASE_URL + `groups/user/sortedpost`;
     let response = await fetch(usersURL, {
         method: 'GET',
         headers: {
@@ -210,6 +210,21 @@ const getAllPostsAllGroupsForUser = async (token) => {
 };
 const getGroupInfo = async (group_id, token) => {
     const groupURL = BASE_URL + `groups/${group_id}`;
+    let response = await fetch(groupURL, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+const getLikesOnPost = async (group_id, post_id, token) => {
+    const groupURL = BASE_URL + `groups/posts/likes/${group_id}/${post_id}`;
     let response = await fetch(groupURL, {
         method: 'GET',
         headers: {
@@ -271,6 +286,40 @@ const addPost = async (group_id, text, token) => {
     return response;
 };
 
+const addLike = async (group_id, post_id, token) => {
+    const groupURL = BASE_URL + `groups/posts/like/${group_id}/${post_id}`;
+    let response = await fetch(groupURL, {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+
+const deleteLike = async (group_id, post_id, token) => {
+    const groupURL = BASE_URL + `groups/like/delete/${group_id}/${post_id}`;
+    let response = await fetch(groupURL, {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: {
+            "Content-Type": "application/json",
+            "token": token,
+        }
+    });
+    response = await response.json();
+    if (response.error) {
+        return false;
+    }
+    return response;
+};
+
 const getUsersInChat = async (chat_id, token) => {
     const usersURL = BASE_URL + `chats/users/${chat_id}`;
     let response = await fetch(usersURL, {
@@ -292,6 +341,7 @@ export {
     register,
     login,
     getMessages,
+    getLikesOnPost,
     postMessage,
     postMessageWS,
     addPostGroupWS,
@@ -313,4 +363,6 @@ export {
     getGroupsForUser,
     createGroup,
     leaveGroupWS,
+    addLike,
+    deleteLike,
 }
