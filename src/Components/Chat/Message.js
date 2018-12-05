@@ -4,7 +4,7 @@ const Message = (props) => {
     return (
         <div style={{textAlign: 'left'}}>
             {props.firstMessage ?
-                <b>{props.message.position === 'left' ? props.message.username + ' :' : null} </b> : null}
+                <b>{props.message.position === 'left' ? `${props.message.firstname} ${props.message.lastname} :` : null} </b> : null}
             <div className="chat-list-div" style={{
                 textAlign: props.message.position,
             }}>
